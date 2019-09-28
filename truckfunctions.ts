@@ -1,18 +1,26 @@
  //These are some functions, lmao
  "use strict";
+
+
+import {truckObject} from "./truckObject.js";
+import {grassObject} from "./grassObject.js";
+import {vec4, mat4, initShaders, perspective, lookAt, flatten, translate, rotateY, rotateX, rotateZ, rotate} from './helperfunctions.js';
+
 let gl:WebGLRenderingContext;
 let canvas:HTMLCanvasElement;
 let program:WebGLProgram;
-let bufferId:WebGLBuffer;
 let umv:WebGLUniformLocation;
 let uproj:WebGLUniformLocation;
 
-let vPosition:GLint;
-let vColor:GLint;
+let ticks:number;
 
-import{vec4, mat4, initShaders, perspective, lookAt} from './helperfunctions.js';
+let truck:truckObject;
+let grass:grassObject;
 
-window.onload = function init(){
+
+
+
+ window.onload = function init(){
     canvas = document.getElementById("gl-canvas") as HTMLCanvasElement;
     gl = canvas.getContext('webgl2') as WebGLRenderingContext;
     if(!gl){
@@ -30,44 +38,62 @@ window.onload = function init(){
     gl.clearColor(0, 1, 1, 1);
     gl.enable(gl.DEPTH_TEST);
 
+
+    truck = new truckObject(gl, program);
+    grass = new grassObject(gl, program);
+
     window.addEventListener("keydown", function(event){
-       keydownEvent(event.key);
+        keydownEvent(event.key);
     });
 
-    makeGeometryAndBuffer();
-
+    ticks = 0;
     window.setInterval(update, 16); //60 fps
-    requestAnimationFrame(render);
 }
 
 function update(){
+    ticks++;
 
+    document.getElementById("output").innerHTML = "" + truck.sliderValue;
+    requestAnimationFrame(renderFrame);
 }
 
 function keydownEvent(key:string){
     switch(key) {
-        case"r":
-            alert("r");
+        case"w":
+            truck.tXpos -= 0.1;
             break;
+        case"s":
+            truck.tXpos += 0.1;
+            break;
+        case"q":
+            truck.tYpos -= 0.1;
+            break;
+        case"a":
+            truck.tYpos += 0.1;
+            break;
+        case"r":
+            truck.sliderValue -= 0.01;
+            break;
+        case"f":
+            truck.sliderValue += 0.01;
+            break;
+        case"z":
+            truck.tYrot -= 1;
+            break;
+        case"c":
+            truck.tYrot += 1;
+            break;
+
     }
 }
 
-function  makeGeometryAndBuffer(){
 
-}
-
-function render(){
+function renderFrame(){
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-    let p:mat4 = perspective(45.0, canvas.clientWidth / canvas.clientHeight, 1, 100);
+    let p:mat4 = perspective(45.0, canvas.clientWidth / canvas.clientHeight, 1.0, 100.0);
     gl.uniformMatrix4fv(uproj, false, p.flatten());
 
+    truck.draw(ticks);
+    grass.draw(ticks);
 
-
-    let mv:mat4 = lookAt(new vec4(0,0,5,1), new vec4(0,0,0,1), new vec4(0,1,0,0));
-
-    //Transformations translations and roations here
-
-
-
-}
+ }
