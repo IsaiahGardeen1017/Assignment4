@@ -12,16 +12,18 @@ let program:WebGLProgram;
 let umv:WebGLUniformLocation;
 let uproj:WebGLUniformLocation;
 
+//increases every fram
 let ticks:number;
 
 let truck:truckObject;
 let grass:grassObject;
 
+
+//if the key is down
 let wDown:boolean = false;
 let sDown:boolean = false;
 let aDown:boolean = false;
 let dDown:boolean = false;
-
 let spaceDown:boolean = false;
 
  window.onload = function init(){
@@ -80,16 +82,15 @@ function update(){
         truck.steeringWheel -= truck.steeringWheelSpeed * 2;
     }
 
-
-
-
         let r:number = Math.floor(255 * truck.brakePedal);
         let g:number = Math.floor(255 * truck.gasPedal);
         document.getElementById("revs").style.fill = 'rgb(' + r + "," + g + ",0)";
 
     truck.tick();
 
-    document.getElementById("output").innerHTML = "" + truck.velocity + "  ||  " + truck.velocity.mag();
+    if(ticks % 8 == 0){
+    document.getElementById("output").innerHTML = "" + truck.realVelocity.mag() + "  ||  " + truck.realVelocity;
+    }
     requestAnimationFrame(renderFrame);
 }
 
@@ -110,6 +111,8 @@ function keydownEvent(key:string){
         case"d":
             dDown = true;
             break;
+        case"r":
+            truck.dir = new vec4(truck.dir[0] * -1, 0,0,0);
     }
 }
 

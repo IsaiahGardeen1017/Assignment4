@@ -11,14 +11,13 @@ export class wheelObject{
     vColor:GLint;
     bufferId:WebGLBuffer;
 
-    rotSpeed:number;
+    zRotOffset:number = 0;
 
     constructor(gl:WebGLRenderingContext, program:WebGLProgram){
         this.gl = gl;
         this.program = program;
         this.bufferId = this.gl.createBuffer();
 
-        this.rotSpeed = 0;
 
         //Set Geometry
         this.bindToBuffer();
@@ -40,12 +39,18 @@ export class wheelObject{
     }
 
 
-    draw(ticks:number, mv:mat4){
+    draw(zrot:number, steeringWheel:number, mv:mat4){
         this.bindToBuffer();
+
+        let rotSpeed:number = 90; //Guess, could do math to figure out exactly but this isn't a physics class
+        let maxTurnAngle:number = 15; //Determines how far the wheels turn (also a guess)
+        this.zRotOffset += (zrot * rotSpeed);
 
         //Translations
         mv = mv.mult(scalem(.1, .1, .1));
-        mv = mv.mult(rotateZ(ticks * 10));
+        mv = mv.mult(rotateY(steeringWheel * maxTurnAngle));
+        mv = mv.mult(rotateZ(this.zRotOffset));
+
 
         this.gl.uniformMatrix4fv(this.gl.getUniformLocation(this.program, "model_view"), false, mv.flatten());
         this.gl.drawArrays(this.gl.TRIANGLES, 0, 1000);    // draw the truck
@@ -75,6 +80,7 @@ function generateWheelPoints():vec4[]{
         gg1.addTriangle(25, ((i+1)%12) + 12, i + 12, rubberColor);
     }
 
+    rubberColor = new vec4(0.05, 0.05, 0.05, 1);
     for(let i:number = 0; i <= 11; i++) {
         gg1.addTriangle((i+1)%12, ((i+1)%12) + 12, i, rubberColor);
         gg1.addTriangle(i, ((i+1)%12) + 12, i+12, rubberColor);

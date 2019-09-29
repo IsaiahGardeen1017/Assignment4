@@ -53,6 +53,7 @@ export class grassObject{
 
 function addGrassPoints():vec4[] {
     let color1:vec4 = new vec4(.1, 1, .1, 1);
+    //let color1:vec4 = new vec4(0, .9, 0, 1);
     let color2:vec4 = new vec4(0, .9, 0, 1);
     let size:number = 101; //Must be odd
     let halfSize :number = Math.floor(size/2);
