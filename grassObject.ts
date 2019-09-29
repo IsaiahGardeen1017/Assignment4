@@ -1,6 +1,7 @@
 "use strict";
 
 import {flatten, lookAt, mat4, rotateY, translate, vec4} from "./helperfunctions.js";
+import {geometryGenerator} from "./geometryGenerator.js";
 
 export class grassObject{
     program:WebGLProgram;
@@ -18,8 +19,7 @@ export class grassObject{
 
         //Set Geometry
         this.bindToBuffer();
-        let points: vec4[] = [];
-        addGrassPoints(points);
+        let points: vec4[] = addGrassPoints();
         this.gl.bufferData(this.gl.ARRAY_BUFFER, flatten(points), this.gl.STATIC_DRAW);
     }
 
@@ -39,32 +39,43 @@ export class grassObject{
 
     draw(ticks:number){
         this.bindToBuffer();
-        let mv:mat4 = lookAt(new vec4(0, 1, 5, 1), new vec4(0,0,0,1), new vec4(0,1,0,0));
+        let mv:mat4 = lookAt(new vec4(0, 2, 5, 1), new vec4(0,0,0,1), new vec4(0,1,0,0));
 
         //Translations
-        mv = mv.mult(rotateY(-ticks));
+        mv = mv.mult(rotateY(45));
 
         this.gl.uniformMatrix4fv(this.gl.getUniformLocation(this.program, "model_view"), false, mv.flatten());
-        this.gl.drawArrays(this.gl.TRIANGLES, 0, 156);    // draw the truck
+        this.gl.drawArrays(this.gl.TRIANGLES, 0, 1000);    // draw the truck
     }
 
 
 }
 
-function addGrassPoints(points) {
-    let color:vec4 = new vec4(0, 1, 0, 1);
-    let size:number = 1;
-    points.push(new vec4(size, 0, size, 1));//corner
-    points.push(color);//color
-    points.push(new vec4(size, 0, -size, 1));//corner
-    points.push(color);//color
-    points.push(new vec4(-size, 0, size, 1));//corner
-    points.push(color);//color
+function addGrassPoints():vec4[] {
+    let color1:vec4 = new vec4(.1, 1, .1, 1);
+    let color2:vec4 = new vec4(0, .9, 0, 1);
+    let size:number = 101; //Must be odd
+    let halfSize :number = Math.floor(size/2);
 
-    points.push(new vec4(-size, 0, size, 1));//corner
-    points.push(color);//color
-    points.push(new vec4(size, 0, -size, 1));//corner
-    points.push(color);//color
-    points.push(new vec4(-size, 0, -size, 1));//corner
-    points.push(color);//color
+    let gg1:geometryGenerator = new geometryGenerator();
+    for(let i:number = 0; i < size; i++){
+        gg1.addVertex(i,  i - halfSize, 0, halfSize);
+
+    }
+    for(let i:number = 0; i < size; i++){
+        gg1.addVertex(i + size, i - halfSize, 0, -halfSize);
+    }
+
+
+    for(let i:number = 0; i < size - 1; i++){
+        let color:vec4 = color1;
+        if(i%2 == 0){
+            color = color2;
+        }
+        gg1.addTriangle(i, i+1, i+size, color);
+        gg1.addTriangle(i+size, i+1, i+size+1, color);
+    }
+
+    return gg1.getTrianglePoints();
+
 }

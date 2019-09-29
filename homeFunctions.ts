@@ -17,8 +17,12 @@ let ticks:number;
 let truck:truckObject;
 let grass:grassObject;
 
+let wDown:boolean = false;
+let sDown:boolean = false;
+let aDown:boolean = false;
+let dDown:boolean = false;
 
-
+let spaceDown:boolean = false;
 
  window.onload = function init(){
     canvas = document.getElementById("gl-canvas") as HTMLCanvasElement;
@@ -42,10 +46,14 @@ let grass:grassObject;
     truck = new truckObject(gl, program);
     grass = new grassObject(gl, program);
 
+
+
     window.addEventListener("keydown", function(event){
         keydownEvent(event.key);
     });
-
+     window.addEventListener("keyup", function(event){
+         keyupEvent(event.key);
+     });
     ticks = 0;
     window.setInterval(update, 16); //60 fps
 }
@@ -53,39 +61,78 @@ let grass:grassObject;
 function update(){
     ticks++;
 
-    document.getElementById("output").innerHTML = "" + truck.sliderValue;
+
+
+    //Key input handling
+    if(wDown){
+        truck.gasPedal += truck.gasPedalSpeed * 2;
+    }
+    if(sDown){
+        truck.brakePedal += truck.brakePedalSpeed * 2;
+    }
+
+
+
+    if(aDown){
+        truck.steeringWheel += truck.steeringWheelSpeed * 2;
+    }
+    if(dDown){
+        truck.steeringWheel -= truck.steeringWheelSpeed * 2;
+    }
+
+
+
+
+        let r:number = Math.floor(255 * truck.brakePedal);
+        let g:number = Math.floor(255 * truck.gasPedal);
+        document.getElementById("revs").style.fill = 'rgb(' + r + "," + g + ",0)";
+
+    truck.tick();
+
+    document.getElementById("output").innerHTML = "" + truck.velocity + "  ||  " + truck.velocity.mag();
     requestAnimationFrame(renderFrame);
 }
 
 function keydownEvent(key:string){
     switch(key) {
         case"w":
-            truck.tXpos -= 0.1;
+            wDown = true;
             break;
         case"s":
-            truck.tXpos += 0.1;
+            sDown = true;
             break;
-        case"q":
-            truck.tYpos -= 0.1;
+        case" ":
+            spaceDown = true;
             break;
         case"a":
-            truck.tYpos += 0.1;
+            aDown = true;
             break;
-        case"r":
-            truck.sliderValue -= 0.01;
+        case"d":
+            dDown = true;
             break;
-        case"f":
-            truck.sliderValue += 0.01;
-            break;
-        case"z":
-            truck.tYrot -= 1;
-            break;
-        case"c":
-            truck.tYrot += 1;
-            break;
-
     }
 }
+
+ function keyupEvent(key:string){
+     switch(key) {
+         case"w":
+             wDown = false;
+             break;
+         case"s":
+             sDown = false;
+             break;
+         case" ":
+             spaceDown = false;
+             break;
+         case"a":
+             aDown = false;
+             break;
+         case"d":
+             dDown = false;
+             break;
+     }
+ }
+
 
 
 function renderFrame(){

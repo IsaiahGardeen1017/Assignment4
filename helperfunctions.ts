@@ -171,6 +171,16 @@ export class vec4 extends Array{
         this.push(w);
     }
 
+    //Magnitude of the vec4
+    mag(): number{
+        return Math.sqrt((this[0]*this[0]) + (this[1]*this[1]) + (this[2]*this[2]) + (this[3]*this[3]));
+    }
+
+    //Multiply by a constant
+    scale(scaler:number): vec4{
+        return new vec4(this[0] * scaler, this[1] * scaler, this[2] * scaler, this[3] * scaler);
+    }
+
     //dot product
     dot(other: vec4): number {
 
