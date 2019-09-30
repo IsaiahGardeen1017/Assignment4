@@ -2,6 +2,7 @@
 
 import {flatten, lookAt, mat4, rotateY, rotateX, rotateZ, translate, vec4, vec2} from "./helperfunctions.js";
 import {wheelObject} from "./wheelObject.js";
+import {geometryGenerator, expandGeometry} from "./geometryGenerator.js";
 
 export class truckObject{
     realVelocity:vec4 = new vec4(0,0,0,0); //What the truck actually moves
@@ -60,8 +61,8 @@ export class truckObject{
         this.rearWheel = new wheelObject(gl, program);
         //Set Geometry
         this.bindToBuffer();
-        let points: vec4[] = [];
-        addTruckPoints(points);
+        let points: vec4[] = addTruckPoints();
+        //alert(points.length);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, flatten(points), this.gl.STATIC_DRAW);
     }
 
@@ -115,7 +116,7 @@ export class truckObject{
 
         //Forces acting against the truck (Top speed is a result of this)
         let dragForce:vec4 = this.velocity.scale(-this.airdrag).scale(this.velocity.mag());
-        let roadForce:vec4 = this.velocity.scale(-this.roaddrag)
+        let roadForce:vec4 = this.velocity.scale(-this.roaddrag);
         let brakingForce:vec4 = this.brakeForce.scale(this.breakpower);
 
 
@@ -166,7 +167,7 @@ export class truckObject{
         //mv = mv.mult(rotateY());
         mv = mv.mult(translate(this.xoffset,this.yoffset, this.zoffset));
         mv = mv.mult(rotateY(180 + this.yrot));
-        mv = mv.mult(rotateZ(this.zrot));
+
 
 
 
@@ -183,11 +184,38 @@ export class truckObject{
     }
 }
 
+function addTruckPoints():vec4[]{
+
+    //sides
+    let gg:geometryGenerator = new geometryGenerator();
+    gg.addVertex(0,-0.03,0.2,-0.025);//Roof left
+    gg.addVertex(1,0.15,0.2,-0.025);//Roof Right
+    gg.addVertex(2,0.15,0.1,0);
+    gg.addVertex(3,0.67,0.1,0);//Bed Top Right
+    gg.addVertex(4,0.67,-0.08,0);//Bottom Right
+    gg.addVertex(5,-0.44,-0.08,0);//Bottom Left
+    gg.addVertex(6,-0.44,0.06,0);
+    gg.addVertex(7,-0.2,0.1,0);
 
 
-function addTruckPoints(points) {
+    let sideColor:vec4 = new vec4(0.8,0.8,0.8,1.0);
+    gg.addTriangle(7, 1,0,sideColor);
+    gg.addTriangle(7,2,1,sideColor);
+    gg.addTriangle(4,3,2,sideColor);
+    gg.addTriangle(7,4,2,sideColor);
+    gg.addTriangle(5,4,7,sideColor);
+    gg.addTriangle(5,7,6,sideColor);
+
+    let connectorColor = new vec4(.7,.7,.7,1);
+    //return gg.getTrianglePoints();
+    return expandGeometry(.36, gg, connectorColor);
 
 
+}
+
+function YeetaddTruckPoints():vec4[] {
+
+    let points:vec4[] = [];
     let color:vec4;
 
     //Left Side
@@ -314,7 +342,7 @@ function addTruckPoints(points) {
 
 
     //Windshield
-    color = new vec4(0.1,0.1,0.1,1.0);
+    color = new vec4(0.1,0.1,0.1,1);
     points.push(new vec4(-0.03,0.2,-0.18, 1));
     points.push(new vec4(color[0], color[1], color[2], color[3]));
     points.push(new vec4(-0.03,0.2,0.18, 1));
@@ -398,4 +426,5 @@ function addTruckPoints(points) {
     points.push(new vec4(color[0], color[1], color[2], color[3]));
     /*
     */
+    return points;
 }

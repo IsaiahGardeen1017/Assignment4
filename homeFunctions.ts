@@ -63,18 +63,13 @@ let spaceDown:boolean = false;
 function update(){
     ticks++;
 
-
-
-    //Key input handling
+    //Moving the pedals based on keys
     if(wDown){
         truck.gasPedal += truck.gasPedalSpeed * 2;
     }
     if(sDown){
         truck.brakePedal += truck.brakePedalSpeed * 2;
     }
-
-
-
     if(aDown){
         truck.steeringWheel += truck.steeringWheelSpeed * 2;
     }
@@ -96,19 +91,19 @@ function update(){
 
 function keydownEvent(key:string){
     switch(key) {
-        case"w":
+        case"ArrowUp":
             wDown = true;
             break;
-        case"s":
+        case"ArrowDown":
             sDown = true;
             break;
         case" ":
             spaceDown = true;
             break;
-        case"a":
+        case"ArrowLeft":
             aDown = true;
             break;
-        case"d":
+        case"ArrowRight":
             dDown = true;
             break;
         case"r":
@@ -118,19 +113,19 @@ function keydownEvent(key:string){
 
  function keyupEvent(key:string){
      switch(key) {
-         case"w":
+         case"ArrowUp":
              wDown = false;
              break;
-         case"s":
+         case"ArrowDown":
              sDown = false;
              break;
          case" ":
              spaceDown = false;
              break;
-         case"a":
+         case"ArrowLeft":
              aDown = false;
              break;
-         case"d":
+         case"ArrowRight":
              dDown = false;
              break;
      }

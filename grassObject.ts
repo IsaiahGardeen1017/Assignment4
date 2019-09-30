@@ -55,18 +55,16 @@ function addGrassPoints():vec4[] {
     let color1:vec4 = new vec4(.1, 1, .1, 1);
     //let color1:vec4 = new vec4(0, .9, 0, 1);
     let color2:vec4 = new vec4(0, .9, 0, 1);
-    let size:number = 501; //Must be odd
+    let size:number = 501; //Must be odd, most definitely because of off by one error somewhere but it works so i'm not going to change it, maybe i do need a loop invarient
     let halfSize :number = Math.floor(size/2);
 
     let gg1:geometryGenerator = new geometryGenerator();
     for(let i:number = 0; i < size; i++){
         gg1.addVertex(i,  i - halfSize, 0, halfSize);
-
     }
     for(let i:number = 0; i < size; i++){
         gg1.addVertex(i + size, i - halfSize, 0, -halfSize);
     }
-
 
     for(let i:number = 0; i < size - 1; i++){
         let color:vec4 = color1;
@@ -78,5 +76,4 @@ function addGrassPoints():vec4[] {
     }
 
     return gg1.getTrianglePoints();
-
 }

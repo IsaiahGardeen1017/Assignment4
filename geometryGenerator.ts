@@ -1,6 +1,6 @@
 "use strict";
 
-import{vec3, vec4} from "./helperfunctions.js";
+import{vec3, vec4,  vec2} from "./helperfunctions.js";
 
 export class geometryGenerator{
     vertices:vec4[];
@@ -33,6 +33,43 @@ export class geometryGenerator{
     getTrianglePoints():vec4[]{
         return this.triangles;
     }
+}
+
+export function expandGeometry(width:number, oldGG:geometryGenerator, color:vec4):vec4[]{
+    let newGG = new geometryGenerator();
+
+    let numPts:number = oldGG.vertices.length;
+
+    for(let i:number = 0; i < numPts; i++){
+        newGG.addVertex(i, oldGG.vertices[i][0], oldGG.vertices[i][1], (width/2) + oldGG.vertices[i][2]);
+        newGG.addVertex(i + numPts, oldGG.vertices[i][0], oldGG.vertices[i][1], -(width/2 + + oldGG.vertices[i][2]));
+    }
+    //Copy over triangles
+    for(let i:number = 0; i < oldGG.triangles.length; i++){
+        if(i % 2 == 0){//Vertex
+            newGG.triangles.push(new vec4(oldGG.triangles[i][0], oldGG.triangles[i][1], (width/2) + oldGG.triangles[i][2], 1))
+        }else{//Color
+            newGG.triangles.push(oldGG.triangles[i]);
+        }
+    }
+    //Add other side from old copied side triangles
+    for(let i:number = 0; i < oldGG.triangles.length; i++){
+        if(i % 2 == 0){//Vertex
+            newGG.triangles.push(new vec4(oldGG.triangles[i][0], oldGG.triangles[i][1], -(width/2 + oldGG.triangles[i][2]), 1))
+        }else{//Color
+            newGG.triangles.push(oldGG.triangles[i]);
+        }
+    }
+
+    //Add triangles in between both sides
+    for(let i:number = 0; i < oldGG.vertices.length; i++){
+        let n:number = oldGG.vertices.length;
+        newGG.addTriangle(i, (i+1)%n, i + n, new vec4(0.9,0.9,0.9,1));
+        newGG.addTriangle((i+1)%n + n,(i+1)%n,i + n, color);
+    }
 
 
+
+    //alert(newGG.getTrianglePoints());
+    return newGG.getTrianglePoints();
 }
