@@ -45,7 +45,7 @@ export class grassObject{
         mv = mv.mult(rotateY(45));
 
         this.gl.uniformMatrix4fv(this.gl.getUniformLocation(this.program, "model_view"), false, mv.flatten());
-        this.gl.drawArrays(this.gl.TRIANGLES, 0, 1000);    // draw the truck
+        this.gl.drawArrays(this.gl.TRIANGLES, 0, 10000);    // draw the truck
     }
 
 
@@ -55,7 +55,7 @@ function addGrassPoints():vec4[] {
     let color1:vec4 = new vec4(.1, 1, .1, 1);
     //let color1:vec4 = new vec4(0, .9, 0, 1);
     let color2:vec4 = new vec4(0, .9, 0, 1);
-    let size:number = 101; //Must be odd
+    let size:number = 501; //Must be odd
     let halfSize :number = Math.floor(size/2);
 
     let gg1:geometryGenerator = new geometryGenerator();
