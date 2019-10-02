@@ -1,6 +1,6 @@
 "use strict";
 
-import {flatten, lookAt, mat4, rotateY, rotateX, rotateZ, translate, vec4, vec2} from "./helperfunctions.js";
+import {flatten, lookAt, mat4, rotateY, rotateX, rotateZ, translate, vec4, vec2, scalem} from "./helperfunctions.js";
 import {wheelObject} from "./wheelObject.js";
 import {geometryGenerator, expandGeometry} from "./geometryGenerator.js";
 
@@ -163,28 +163,91 @@ export class truckObject{
         let mv:mat4 = lookAt(new vec4(0, 2, 5, 1), new vec4(0,0,0,1), new vec4(0,1,0,0));
 
         //Translations
-        mv = mv.mult(translate(0,.17,0));
+        //mv = mv.mult(scalem(0.01,0.01,0.01));
+
+        mv = mv.mult(translate(0,0.17,0));
+        mv = mv.mult(translate(0,0.15,0));
         //mv = mv.mult(rotateY());
         mv = mv.mult(translate(this.xoffset,this.yoffset, this.zoffset));
         mv = mv.mult(rotateY(180 + this.yrot));
 
-
+        let scaler:number = 1.5;
+        mv = mv.mult(scalem(scaler,scaler,scaler,));
 
 
         this.gl.uniformMatrix4fv(this.gl.getUniformLocation(this.program, "model_view"), false, mv.flatten());
         this.gl.drawArrays(this.gl.TRIANGLES, 0, 156);    // draw the truck
 
+        mv = mv.mult(scalem(1/scaler, 1/scaler, 1/scaler));
+        mv = mv.mult(translate(0,-.15,0));
         //Draw the wheel
         let wheelrot:number = this.realVelocity.mag() * this.dir[0];
-        this.frontWheel.draw(wheelrot, this.steeringWheel, mv.mult(translate(-.25, -.07, .17)));
-        this.frontWheel.draw(wheelrot, this.steeringWheel, mv.mult(translate(-.25, -.07, -.17)));
+        this.frontWheel.draw(wheelrot, this.steeringWheel, mv.mult(translate(-.15, -.07, .17)));
+        this.frontWheel.draw(wheelrot, this.steeringWheel, mv.mult(translate(-.15, -.07, -.17)));
 
-        this.rearWheel.draw(wheelrot, 0, mv.mult(translate(.4, -.07, .17)));
-        this.rearWheel.draw(wheelrot, 0, mv.mult(translate(.4, -.07, -.17)));
+        this.rearWheel.draw(wheelrot, 0, mv.mult(translate(.59, -.07, .17)));
+        this.rearWheel.draw(wheelrot, 0, mv.mult(translate(.59, -.07, -.17)));
     }
 }
 
+
 function addTruckPoints():vec4[]{
+    let gg = new geometryGenerator();
+
+    //SIDE
+    gg.addVertex(0,0.530,-0.037,0.13);
+    gg.addVertex(1,0.530,-0.117,0.13);
+    gg.addVertex(2,0.450,-0.117,0.13);
+    gg.addVertex(3,0.450,-0.090,0.13);
+    gg.addVertex(4,0.330,-0.090,0.13);
+    gg.addVertex(5,0.330,-0.117,0.13);
+    gg.addVertex(6,-0.030,-0.117,0.13);
+    gg.addVertex(7,-0.030,-0.090,0.13);
+    gg.addVertex(8,-0.150,-0.090,0.13);
+    gg.addVertex(9,-0.150,-0.103,0.13);
+    gg.addVertex(10,-0.197,-0.103,0.13);
+    gg.addVertex(11,-0.197,-0.057,0.13);
+    gg.addVertex(12,-0.030,-0.037,0.13);
+    gg.addVertex(13,0.077,0.037,0.13);
+    gg.addVertex(14,0.190,0.037,0.13);
+    gg.addVertex(15,0.197,-0.037,0.13);
+
+    //RUNNING BOARD
+    gg.addVertex(16,0.323,-0.157,0.12);
+    gg.addVertex(17,-0.017,-0.157,0.12);
+
+
+
+
+
+    //Colors
+    let sideColor = new vec4(0.8, 0.8, 0.8, 1);
+    let runningBoard = new vec4(0.5, 0.5, 0.5, 1);
+
+    //Triangles
+    gg.addTriangle(0,1,2, sideColor);
+    gg.addTriangle(0,2,3, sideColor);
+    gg.addTriangle(0,3,15, sideColor);
+    gg.addTriangle(3,4,15, sideColor);
+    gg.addTriangle(4,5,15, sideColor);
+    gg.addTriangle(5,6,15, sideColor);
+    gg.addTriangle(6,7,15, sideColor);
+    gg.addTriangle(7,12,15, sideColor);
+    gg.addTriangle(7,8,12, sideColor);
+    gg.addTriangle(8,9,10, sideColor);
+    gg.addTriangle(8,10,11, sideColor);
+    gg.addTriangle(8,11,12, sideColor);
+    gg.addTriangle(12,14,15, sideColor);
+    gg.addTriangle(12,13,14, sideColor);
+
+    gg.addTriangle(16, 17, 5, runningBoard);
+    gg.addTriangle(6, 5, 17, runningBoard);
+
+
+    return gg.getTrianglePoints();
+}
+
+function GENaddTruckPoints():vec4[]{
 
     //sides
     let gg:geometryGenerator = new geometryGenerator();

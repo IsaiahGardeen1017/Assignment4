@@ -33,8 +33,14 @@ export class geometryGenerator{
     getTrianglePoints():vec4[]{
         return this.triangles;
     }
+
+    addQuad(p1:number, p2:number, p3:number, p4:number, color:vec4){
+        addTriangle()
+    }
 }
 
+
+//Probalby won't use since coloring functionality is limited
 export function expandGeometry(width:number, oldGG:geometryGenerator, color:vec4):vec4[]{
     let newGG = new geometryGenerator();
 
