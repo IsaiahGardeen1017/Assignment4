@@ -35,7 +35,8 @@ export class geometryGenerator{
     }
 
     addQuad(p1:number, p2:number, p3:number, p4:number, color:vec4){
-        addTriangle()
+        this.addTriangle(p1, p2, p3, color);
+        this.addTriangle(p1, p3, p4, color);
     }
 }
 
