@@ -12,18 +12,20 @@ let program:WebGLProgram;
 let umv:WebGLUniformLocation;
 let uproj:WebGLUniformLocation;
 
-//increases every fram
+//increases every frame
 let ticks:number;
 
 let truck:truckObject;
 let grass:grassObject;
 
+let breakingPeriodStart:number  = -1;
+let reverse:boolean = false;
 
 //if the key is down
-let wDown:boolean = false;
-let sDown:boolean = false;
-let aDown:boolean = false;
-let dDown:boolean = false;
+let increaseGasPedal:boolean = false;
+let increaseBreak:boolean = false;
+let turnWheelLeft:boolean = false;
+let turnWheelRight:boolean = false;
 let spaceDown:boolean = false;
 
  window.onload = function init(){
@@ -48,6 +50,10 @@ let spaceDown:boolean = false;
     truck = new truckObject(gl, program);
     grass = new grassObject(gl, program);
 
+    let btn = document.getElementById("toggleButton");
+    btn.addEventListener('click', function (event){
+        truck.funmode = !truck.funmode;
+    });
 
 
     window.addEventListener("keydown", function(event){
@@ -63,17 +69,68 @@ let spaceDown:boolean = false;
 function update(){
     ticks++;
 
-    //Moving the pedals based on keys
-    if(wDown){
-        truck.gasPedal += truck.gasPedalSpeed * 2;
+    if(!increaseBreak && !reverse || !increaseGasPedal && reverse){
+        breakingPeriodStart = -1;
     }
-    if(sDown){
-        truck.brakePedal += truck.brakePedalSpeed * 2;
+    //I wrote this next bit in a chick fil a parking lot at midnight and somehow it works!
+    let breakDelay:number = 45;
+    if(!reverse || !truck.funmode) {
+        if(!truck.funmode) {
+            reverse = true;
+        }
+        //Moving the pedals based on keys
+        if (increaseGasPedal) {
+            if(!truck.funmode){
+                truck.brakePedal = 0;
+            }
+            truck.gasPedal += truck.gasPedalSpeed * 2;
+            breakingPeriodStart = -1;
+        }
+        if (increaseBreak) {
+            if(!truck.funmode){
+                truck.gasPedal = 0;
+            }
+            if (breakingPeriodStart == -1 && truck.funmode) {
+                breakingPeriodStart = ticks;
+            }else if(breakingPeriodStart + breakDelay == ticks && truck.funmode){
+                reverse = true;
+                breakingPeriodStart = -1;
+                truck.dir = new vec4(truck.dir[0] * -1, 0,0,0);
+            }
+            truck.brakePedal += truck.brakePedalSpeed * 2;
+        }
+    }else{//in reverse
+        if (increaseBreak) {
+            truck.gasPedal += truck.gasPedalSpeed * 2;
+            breakingPeriodStart = -1;
+        }
+        if (increaseGasPedal) {
+            if (breakingPeriodStart == -1 && truck.funmode) {
+                breakingPeriodStart = ticks;
+            }else if(breakingPeriodStart + breakDelay == ticks  && truck.funmode){
+                reverse = false;
+                breakingPeriodStart = -1;
+                truck.dir = new vec4(truck.dir[0] * -1, 0,0,0);
+            }
+            truck.brakePedal += truck.brakePedalSpeed * 2;
+        }
     }
-    if(aDown){
+
+    if(spaceDown){
+        if(truck.funmode){
+            truck.brakePedal += truck.brakePedalSpeed * 2;
+        }else{
+            truck.gasPedal = 0;
+            truck.brakePedal = 0;
+            truck.steeringWheel = 0;
+            truck.velocity = new vec4(0,0,0,0);
+        }
+    }
+
+    if(turnWheelLeft){
         truck.steeringWheel += truck.steeringWheelSpeed * 2;
     }
-    if(dDown){
+    if(turnWheelRight){
         truck.steeringWheel -= truck.steeringWheelSpeed * 2;
     }
 
@@ -82,9 +139,10 @@ function update(){
         document.getElementById("revs").style.fill = 'rgb(' + r + "," + g + ",0)";
 
     truck.tick();
-
-    if(ticks % 8 == 0){
-    document.getElementById("output").innerHTML = "" + truck.realVelocity.mag() + "  ||  " + truck.realVelocity;
+    if(truck.funmode) {
+        document.getElementById("output").innerText = "You are in fun physics mode! you can toggle to boring assignment mode.";
+    }else{
+        document.getElementById("output").innerText = "You are in boring assignment mode, you can toggle to fun physics mode!";
     }
     requestAnimationFrame(renderFrame);
 }
@@ -92,19 +150,19 @@ function update(){
 function keydownEvent(key:string){
     switch(key) {
         case"ArrowUp":
-            wDown = true;
+            increaseGasPedal = true;
             break;
         case"ArrowDown":
-            sDown = true;
+            increaseBreak = true;
             break;
         case" ":
             spaceDown = true;
             break;
         case"ArrowLeft":
-            aDown = true;
+            turnWheelLeft = true;
             break;
         case"ArrowRight":
-            dDown = true;
+            turnWheelRight = true;
             break;
         case"r":
             truck.dir = new vec4(truck.dir[0] * -1, 0,0,0);
@@ -114,28 +172,31 @@ function keydownEvent(key:string){
  function keyupEvent(key:string){
      switch(key) {
          case"ArrowUp":
-             wDown = false;
+             increaseGasPedal = false;
              break;
          case"ArrowDown":
-             sDown = false;
+             increaseBreak = false;
              break;
          case" ":
              spaceDown = false;
              break;
          case"ArrowLeft":
-             aDown = false;
+             turnWheelLeft = false;
              break;
          case"ArrowRight":
-             dDown = false;
+             turnWheelRight = false;
              break;
      }
  }
 
-
+function toggleGameMode(input:any){
+     alert("click");
+}
 
 function renderFrame(){
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    let p:mat4 = perspective(45.0, canvas.clientWidth / canvas.clientHeight, 1.0, 100.0);
+
+    let p:mat4 = perspective(45, canvas.clientWidth / canvas.clientHeight, 1.0, 1000.0);
     gl.uniformMatrix4fv(uproj, false, p.flatten());
 
     truck.draw(ticks);
