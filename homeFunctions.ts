@@ -5,6 +5,7 @@
 import {truckObject} from "./truckObject.js";
 import {grassObject} from "./grassObject.js";
 import {vec4, mat4, initShaders, perspective, lookAt, flatten, translate, rotateY, rotateX, rotateZ, rotate} from './helperfunctions.js';
+import {camera} from "./camera.js";
 
 let gl:WebGLRenderingContext;
 let canvas:HTMLCanvasElement;
@@ -17,6 +18,8 @@ let ticks:number;
 
 let truck:truckObject;
 let grass:grassObject;
+
+let cam:camera;
 
 let breakingPeriodStart:number  = -1;
 let reverse:boolean = false;
@@ -46,9 +49,10 @@ let spaceDown:boolean = false;
     gl.clearColor(0, 1, 1, 1);
     gl.enable(gl.DEPTH_TEST);
 
-
-    truck = new truckObject(gl, program);
-    grass = new grassObject(gl, program);
+    cam = new camera();
+    truck = new truckObject(gl, program, cam);
+    grass = new grassObject(gl, program, cam);
+    cam.truck = truck; //Not sure of a better way of doing this
 
     let btn = document.getElementById("toggleButton");
     btn.addEventListener('click', function (event){
@@ -138,7 +142,8 @@ function update(){
         let g:number = Math.floor(255 * truck.gasPedal);
         document.getElementById("revs").style.fill = 'rgb(' + r + "," + g + ",0)";
 
-    truck.tick();
+    truck.update();
+    cam.update();
     if(truck.funmode) {
         document.getElementById("output").innerText = "You are in fun physics mode! you can toggle to boring assignment mode.";
     }else{
@@ -166,6 +171,18 @@ function keydownEvent(key:string){
             break;
         case"r":
             truck.dir = new vec4(truck.dir[0] * -1, 0,0,0);
+        case"q":
+            cam.zoomIn();
+            break;
+        case"w":
+            cam.zoomOut();
+            break;
+        case"a":
+            cam.dollyIn();
+            break;
+        case"s":
+            cam.dollyOut();
+            break;
     }
 }
 
@@ -196,7 +213,7 @@ function toggleGameMode(input:any){
 function renderFrame(){
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    let p:mat4 = perspective(45, canvas.clientWidth / canvas.clientHeight, 1.0, 1000.0);
+    let p:mat4 = perspective(cam.fov, canvas.clientWidth / canvas.clientHeight, 0.1, 1000.0);
     gl.uniformMatrix4fv(uproj, false, p.flatten());
 
     truck.draw(ticks);

@@ -3,6 +3,7 @@
 import {flatten, lookAt, mat4, rotateY, rotateX, rotateZ, translate, vec4, vec2, scalem} from "./helperfunctions.js";
 import {wheelObject} from "./wheelObject.js";
 import {geometryGenerator, expandGeometry} from "./geometryGenerator.js";
+import {camera} from "./camera";
 
 export class truckObject{
     realVelocity:vec4 = new vec4(0,0,0,0); //What the truck actually moves
@@ -20,7 +21,7 @@ export class truckObject{
     airdrag:number = 50; //Coefficient applied to engineForce
     roaddrag:number = 10; //Coefficient applied to rolling resistance
 
-    horsePower:number = 3; //Coefficient applied to engineForce
+    horsePower:number = 1; //Coefficient applied to engineForce
     breakpower:number = 5; //Coefficient applied to brakeForce
 
     gasPedal:number = 0;
@@ -38,12 +39,10 @@ export class truckObject{
     yrot:number = 0;
     zrot:number = 0;
 
-
-
-
-
     frontWheel:wheelObject;
     rearWheel:wheelObject;
+
+    cam:camera;
 
     program:WebGLProgram;
     gl:WebGLRenderingContext;
@@ -53,12 +52,13 @@ export class truckObject{
 
     bufferId:WebGLBuffer;
 
-    constructor(gl:WebGLRenderingContext, program:WebGLProgram){
+    constructor(gl:WebGLRenderingContext, program:WebGLProgram, cam:camera){
         this.gl = gl;
         this.program = program;
         this.bufferId = this.gl.createBuffer();
         this.frontWheel = new wheelObject(gl, program);
         this.rearWheel = new wheelObject(gl, program);
+        this.cam = cam;
         //Set Geometry
         this.bindToBuffer();
         let points: vec4[] = addTruckPoints();
@@ -67,7 +67,7 @@ export class truckObject{
     }
 
     //Updates every frame
-    tick(){
+    update(){
         //Handles moving of the gas pedal
         if(this.gasPedal >= 1){
             this.gasPedal = 1 - this.gasPedalSpeed;
@@ -104,7 +104,7 @@ export class truckObject{
 
         //Handles amount of turning the truck does (both visually and change in velocity direction)
         let turnRadius:number = 1;
-        if(this.dir[0] < 0){
+        if(this.dir[0] < 0){//reverse
             turnRadius = -1.5;
         }
         this.yrot += (25 * this.velocity.mag() * this.steeringWheel) * turnRadius;
@@ -121,10 +121,10 @@ export class truckObject{
             if (this.velocity[0] * this.dir[0] <= 0) {
                 brakingForce = new vec4(0, 0, 0, 0);
             }
-            if (this.velocity.mag() <= 0.001) {
+            if (this.velocity.mag() <= 0.0001) {
                 brakingForce = new vec4(0, 0, 0, 0);
             }
-            if (this.velocity.mag() <= 0.001) {
+            if (this.velocity.mag() <= 0.0001) {
                 this.velocity = new vec4(0, 0, 0, 0);
             }
         }
@@ -158,7 +158,7 @@ export class truckObject{
 
     draw(ticks:number){
         this.bindToBuffer();
-        let mv:mat4 = lookAt(new vec4(0, 1, 5, 1), new vec4(0,0,0,1), new vec4(0,1,0,0));
+        let mv:mat4 = this.cam.look();
 
         //Translations
         //mv = mv.mult(scalem(0.01,0.01,0.01));
@@ -204,8 +204,8 @@ function addTruckPoints():vec4[]{
     gg.addVertex(	10	,	-0.197	,	-0.117	,	0.13	);
     gg.addVertex(	11	,	-0.197	,	-0.057	,	0.13	);
     gg.addVertex(	12	,	-0.030	,	-0.037	,	0.13	);
-    gg.addVertex(	13	,	0.077	,	0.037	,	0.13	);
-    gg.addVertex(	14	,	0.190	,	0.037	,	0.13	);
+    gg.addVertex(	13	,	0.077	,	0.037	,	0.11	);
+    gg.addVertex(	14	,	0.190	,	0.037	,	0.11	);
     gg.addVertex(	15	,	0.197	,	-0.037	,	0.13	);
     gg.addVertex(	16	,	0.323	,	-0.157	,	0.11	);
     gg.addVertex(	17	,	-0.017	,	-0.157	,	0.11	);
@@ -266,8 +266,8 @@ function addTruckPoints():vec4[]{
     gg.addVertex(	68	,	-0.197	,	-0.117	,	-0.13	);
     gg.addVertex(	69	,	-0.197	,	-0.057	,	-0.13	);
     gg.addVertex(	70	,	-0.030	,	-0.037	,	-0.13	);
-    gg.addVertex(	71	,	0.077	,	0.037	,	-0.13	);
-    gg.addVertex(	72	,	0.190	,	0.037	,	-0.13	);
+    gg.addVertex(	71	,	0.077	,	0.037	,	-0.11	);
+    gg.addVertex(	72	,	0.190	,	0.037	,	-0.11	);
     gg.addVertex(	73	,	0.197	,	-0.037	,	-0.13	);
     gg.addVertex(	74	,	0.323	,	-0.157	,	-0.11	);
     gg.addVertex(	75	,	-0.017	,	-0.157	,	-0.11	);
@@ -330,7 +330,8 @@ function addTruckPoints():vec4[]{
     let windowColor = new vec4(0,0,0,1);
     let bottomColor = new vec4(.29, .25, .16, 1);
     let tailLightColor = new vec4(1, 0, 0, 1);
-    let headLightColor = new vec4(.85, .85, 0, 1);
+    let headLightColor = new vec4(.75, .75, 0, 1);
+    let grillColor = new vec4(.45, .45, .45, 1);
 
     let offset:number = 0;
     let diff:number = 29; //if you change this by one it will look like it has crashed
@@ -421,7 +422,7 @@ function addTruckPoints():vec4[]{
 
     //Span inner truck points
     offset = diff*3;
-    gg.addQuad(11 + diff, 10 + diff, 10 + offset, 11 + offset, bumperColor);//Grill
+    gg.addQuad(11 + diff, 10 + diff, 10 + offset, 11 + offset, grillColor);//Grill
     gg.addQuad(14 + diff, 15 + diff, 15 + offset, 14 + offset, windowColor);
     gg.addQuad(12 + diff, 13 + diff, 13 + offset, 12 + offset, windowColor);
 

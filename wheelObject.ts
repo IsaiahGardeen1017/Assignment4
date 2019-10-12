@@ -89,7 +89,7 @@ function generateWheelPoints():vec4[]{
 
     //Rim
     let gg2:geometryGenerator = new geometryGenerator();
-    let rimThickness:number = 0.41;
+    let rimThickness:number = 0.45;
     let rimDiameter:number = 0.66;
     let rimColor:vec4 = new vec4(0.75,0.75,0.75,1);
     let blackColor:vec4 = new vec4(0,0,0,1);
@@ -118,7 +118,7 @@ function generateWheelPoints():vec4[]{
 
     //HubCap
     let gg3:geometryGenerator = new geometryGenerator();
-    let hubcapThickness:number = 0.42;
+    let hubcapThickness:number = 0.5;
     let hubcapDiameter:number = 0.4;
     rimColor = new vec4(.6,.6,.6,1)
     for(let i:number = 0; i <= 11; i++){
