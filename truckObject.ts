@@ -19,7 +19,7 @@ export class truckObject{
 
 
     airdrag:number = 50; //Coefficient applied to engineForce
-    roaddrag:number = 10; //Coefficient applied to rolling resistance
+    roaddrag:number = 5; //Coefficient applied to rolling resistance
 
     horsePower:number = 1; //Coefficient applied to engineForce
     breakpower:number = 5; //Coefficient applied to brakeForce
@@ -36,7 +36,7 @@ export class truckObject{
     xoffset:number = 0;
     yoffset:number = 0;
     zoffset:number = 0;
-    yrot:number = 0;
+    yrot:number = 0;//yrotational offset
     zrot:number = 0;
 
     frontWheel:wheelObject;
@@ -103,9 +103,9 @@ export class truckObject{
         this.brakeForce = this.dir.scale(-this.brakePedal);
 
         //Handles amount of turning the truck does (both visually and change in velocity direction)
-        let turnRadius:number = 1;
+        let turnRadius:number = 1.5;
         if(this.dir[0] < 0){//reverse
-            turnRadius = -1.5;
+            turnRadius = -2;
         }
         this.yrot += (25 * this.velocity.mag() * this.steeringWheel) * turnRadius;
 
@@ -204,8 +204,8 @@ function addTruckPoints():vec4[]{
     gg.addVertex(	10	,	-0.197	,	-0.117	,	0.13	);
     gg.addVertex(	11	,	-0.197	,	-0.057	,	0.13	);
     gg.addVertex(	12	,	-0.030	,	-0.037	,	0.13	);
-    gg.addVertex(	13	,	0.077	,	0.037	,	0.11	);
-    gg.addVertex(	14	,	0.190	,	0.037	,	0.11	);
+    gg.addVertex(	13	,	0.077	,	0.037	,	0.13	);
+    gg.addVertex(	14	,	0.190	,	0.037	,	0.13	);
     gg.addVertex(	15	,	0.197	,	-0.037	,	0.13	);
     gg.addVertex(	16	,	0.323	,	-0.157	,	0.11	);
     gg.addVertex(	17	,	-0.017	,	-0.157	,	0.11	);
@@ -266,8 +266,8 @@ function addTruckPoints():vec4[]{
     gg.addVertex(	68	,	-0.197	,	-0.117	,	-0.13	);
     gg.addVertex(	69	,	-0.197	,	-0.057	,	-0.13	);
     gg.addVertex(	70	,	-0.030	,	-0.037	,	-0.13	);
-    gg.addVertex(	71	,	0.077	,	0.037	,	-0.11	);
-    gg.addVertex(	72	,	0.190	,	0.037	,	-0.11	);
+    gg.addVertex(	71	,	0.077	,	0.037	,	-0.13	);
+    gg.addVertex(	72	,	0.190	,	0.037	,	-0.13	);
     gg.addVertex(	73	,	0.197	,	-0.037	,	-0.13	);
     gg.addVertex(	74	,	0.323	,	-0.157	,	-0.11	);
     gg.addVertex(	75	,	-0.017	,	-0.157	,	-0.11	);

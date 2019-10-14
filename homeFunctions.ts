@@ -183,6 +183,9 @@ function keydownEvent(key:string){
         case"s":
             cam.dollyOut();
             break;
+        case"f":
+            cam.toggleFreeCam();
+            break;
     }
 }
 
