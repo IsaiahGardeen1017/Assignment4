@@ -30,6 +30,8 @@ let increaseBreak:boolean = false;
 let turnWheelLeft:boolean = false;
 let turnWheelRight:boolean = false;
 let spaceDown:boolean = false;
+let turnHeadLeftDown:boolean = false;
+let turnHeadRightDown:boolean = false;
 
  window.onload = function init(){
     canvas = document.getElementById("gl-canvas") as HTMLCanvasElement;
@@ -149,6 +151,13 @@ function update(){
     }else{
         document.getElementById("output").innerText = "You are in boring assignment mode, you can toggle to fun physics mode!";
     }
+
+    if(turnHeadRightDown) {
+        truck.head.turnHeadRight();
+    }
+    if(turnHeadLeftDown){
+        truck.head.turnHeadLeft();
+    }
     requestAnimationFrame(renderFrame);
 }
 
@@ -169,22 +178,36 @@ function keydownEvent(key:string){
         case"ArrowRight":
             turnWheelRight = true;
             break;
-        case"r":
-            truck.dir = new vec4(truck.dir[0] * -1, 0,0,0);
+        case"z":
+            turnHeadLeftDown = true;
+            break;
+        case"x":
+            turnHeadRightDown = true;
+            break;
         case"q":
             cam.zoomIn();
             break;
         case"w":
             cam.zoomOut();
             break;
-        case"a":
+        case"s":
             cam.dollyIn();
             break;
-        case"s":
+        case"a":
             cam.dollyOut();
             break;
         case"f":
             cam.toggleFreeCam();
+            break;
+        case"1":
+            cam.camType = "free";
+            cam.camLocation[1] = 5;
+            break;
+        case"2":
+            cam.camType = "chase";
+            break;
+        case"3":
+            cam.camType = "viewpoint";
             break;
     }
 }
@@ -205,6 +228,12 @@ function keydownEvent(key:string){
              break;
          case"ArrowRight":
              turnWheelRight = false;
+             break;
+         case"z":
+             turnHeadLeftDown = false;
+             break;
+         case"x":
+             turnHeadRightDown = false;
              break;
      }
  }

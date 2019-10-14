@@ -42,8 +42,8 @@ export class wheelObject{
     draw(zrot:number, steeringWheel:number, mv:mat4){
         this.bindToBuffer();
 
-        let rotSpeed:number = 90; //Guess, could do math to figure out exactly but this isn't a physics class
-        let maxTurnAngle:number = 15; //Determines how far the wheels turn (also a guess)
+        let rotSpeed:number = 90;
+        let maxTurnAngle:number = 15; //Determines how far the wheels turn (arbitrary)
         this.zRotOffset += (zrot * rotSpeed);
 
         //Translations

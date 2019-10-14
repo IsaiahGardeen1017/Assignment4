@@ -1,6 +1,6 @@
 "use strict";
 
-import {flatten, lookAt, mat4, rotateY, rotateX, rotateZ, translate, vec4, vec2, scalem} from "./helperfunctions.js";
+import {flatten, lookAt, mat4, rotateY, rotateX, rotateZ, translate, vec4, vec2, scalem, toradians} from "./helperfunctions.js";
 import {wheelObject} from "./wheelObject.js";
 import {geometryGenerator, expandGeometry} from "./geometryGenerator.js";
 import {truckObject} from "./truckObject";
@@ -15,6 +15,7 @@ export class camera{
     dollySpeed:number = .1;
     fixed:boolean = false;
     camType:string = "free";
+    lastValidDirection:vec4 = new vec4(1, 0, 1, 0).normalize();
 
     constructor(){
         this.camDirection = new vec4(0,0,0,1);
@@ -79,6 +80,9 @@ export class camera{
 
     update(){
 
+        let direction:vec4;
+        let offset:number;
+        let dir:vec4;
         switch(this.camType) {
             case"free":
                 if(!this.fixed){
@@ -88,11 +92,22 @@ export class camera{
                 break;
             case"chase":
                 this.camDirection = new vec4(this.truck.xoffset, 0, this.truck.zoffset, 1);
+                //let direction:vec4 = this.truck.realVelocity.normalize();
+                direction = new vec4(1, 0, 0, 0).normalize();
+                offset = 90
+                dir = new vec4((Math.sin(toradians(this.truck.yrot + offset)) * direction[0]) + (Math.cos(toradians(this.truck.yrot + offset)) * direction[2]),0,(Math.cos(toradians(this.truck.yrot + offset)) * direction[0]) - (Math.sin(toradians(this.truck.yrot + offset)) * direction[2]), 0);
 
-                this.camLocation = new vec4(this.truck.xoffset, 0.5, this.truck.zoffset, 1);
+                this.camLocation = new vec4(this.truck.xoffset - (2 * dir[0]), 0.5, this.truck.zoffset -  (2 * dir[2]), 1);
                 break;
+            case"viewpoint":
+                //let direction:vec4 = this.truck.realVelocity.normalize();
+                direction = new vec4(1, 0, 0, 0).normalize();
+                offset = 90 + this.truck.head.yRotOffset;
+                dir = new vec4((Math.sin(toradians(this.truck.yrot + offset)) * direction[0]) + (Math.cos(toradians(this.truck.yrot + offset)) * direction[2]),0,(Math.cos(toradians(this.truck.yrot + offset)) * direction[0]) - (Math.sin(toradians(this.truck.yrot + offset)) * direction[2]), 0);
 
-
+                this.camLocation = new vec4(this.truck.xoffset, 0.155, this.truck.zoffset, 1);
+                this.camDirection = new vec4(this.truck.xoffset - (2 * -dir[0]), 0.5, this.truck.zoffset -  (2 * -dir[2]), 1);
+                break;
         }
     }
 }

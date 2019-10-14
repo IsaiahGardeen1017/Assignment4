@@ -2,6 +2,7 @@
 
 import {flatten, lookAt, mat4, rotateY, rotateX, rotateZ, translate, vec4, vec2, scalem} from "./helperfunctions.js";
 import {wheelObject} from "./wheelObject.js";
+import {headObject} from "./headObject.js";
 import {geometryGenerator, expandGeometry} from "./geometryGenerator.js";
 import {camera} from "./camera";
 
@@ -41,6 +42,7 @@ export class truckObject{
 
     frontWheel:wheelObject;
     rearWheel:wheelObject;
+    head:headObject;
 
     cam:camera;
 
@@ -58,6 +60,7 @@ export class truckObject{
         this.bufferId = this.gl.createBuffer();
         this.frontWheel = new wheelObject(gl, program);
         this.rearWheel = new wheelObject(gl, program);
+        this.head = new headObject(gl, program);
         this.cam = cam;
         //Set Geometry
         this.bindToBuffer();
@@ -166,7 +169,7 @@ export class truckObject{
         mv = mv.mult(translate(0,0.32,0));
         //mv = mv.mult(rotateY());
         mv = mv.mult(translate(this.xoffset,this.yoffset, this.zoffset));
-        mv = mv.mult(rotateY(180 + this.yrot));
+        mv = mv.mult(rotateY(this.yrot + 180));
 
         let scaler:number = 1.5;//scale size of truck body
         mv = mv.mult(scalem(scaler,scaler,scaler,));
@@ -175,15 +178,21 @@ export class truckObject{
         this.gl.uniformMatrix4fv(this.gl.getUniformLocation(this.program, "model_view"), false, mv.flatten());
         this.gl.drawArrays(this.gl.TRIANGLES, 0, 10000);    // draw the truck
 
-        mv = mv.mult(scalem(1/scaler, 1/scaler, 1/scaler));//We dont want to scale the wheel, we do that sperately
-        mv = mv.mult(translate(0,-.15,0));
+        mv = mv.mult(scalem(1/scaler, 1/scaler, 1/scaler));//We dont want to scale the wheels and head, we do that sperately
+
+        //Draw the head
+        this.head.draw(mv.mult(translate(-.275, -.165, 0)));//Where the head is in relation to the truck
+
+
         //Draw the wheel
         let wheelrot:number = this.realVelocity.mag() * this.dir[0];
-        this.frontWheel.draw(wheelrot, this.steeringWheel, mv.mult(translate(-.15, -.07, .17)));
-        this.frontWheel.draw(wheelrot, this.steeringWheel, mv.mult(translate(-.15, -.07, -.17)));
+        this.frontWheel.draw(wheelrot, this.steeringWheel, mv.mult(translate(-.15, -.22, .17)));
+        this.frontWheel.draw(wheelrot, this.steeringWheel, mv.mult(translate(-.15, -.22, -.17)));
 
-        this.rearWheel.draw(wheelrot, 0, mv.mult(translate(.59, -.07, .17)));
-        this.rearWheel.draw(wheelrot, 0, mv.mult(translate(.59, -.07, -.17)));
+        this.rearWheel.draw(wheelrot, 0, mv.mult(translate(.59, -.22, .17)));
+        this.rearWheel.draw(wheelrot, 0, mv.mult(translate(.59, -.22, -.17)));
+
+
     }
 }
 
