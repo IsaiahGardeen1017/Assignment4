@@ -30,7 +30,7 @@ export class truckObject{
     steeringWheel:number = 0;
     gasPedalSpeed:number = .03;
     brakePedalSpeed:number = .03;
-    steeringWheelSpeed:number = .03;
+    steeringWheelSpeed:number = .01;
 
     funmode:boolean = true;
 
@@ -186,8 +186,8 @@ export class truckObject{
 
         //Draw the wheel
         let wheelrot:number = this.realVelocity.mag() * this.dir[0];
-        this.frontWheel.draw(wheelrot, this.steeringWheel, mv.mult(translate(-.15, -.22, .17)));
-        this.frontWheel.draw(wheelrot, this.steeringWheel, mv.mult(translate(-.15, -.22, -.17)));
+        this.frontWheel.draw(wheelrot, this.steeringWheel, mv.mult(translate(-.13, -.22, .17)));
+        this.frontWheel.draw(wheelrot, this.steeringWheel, mv.mult(translate(-.13, -.22, -.17)));
 
         this.rearWheel.draw(wheelrot, 0, mv.mult(translate(.59, -.22, .17)));
         this.rearWheel.draw(wheelrot, 0, mv.mult(translate(.59, -.22, -.17)));

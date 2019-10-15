@@ -200,14 +200,13 @@ function keydownEvent(key:string){
             cam.toggleFreeCam();
             break;
         case"1":
-            cam.camType = "free";
-            cam.camLocation[1] = 5;
+            cam.toFreeCam();
             break;
         case"2":
-            cam.camType = "chase";
+            cam.toChaseCam();
             break;
         case"3":
-            cam.camType = "viewpoint";
+            cam.toViewpointCam();
             break;
     }
 }
@@ -245,6 +244,7 @@ function toggleGameMode(input:any){
 function renderFrame(){
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
+    //I know the near value is small but I like to be able to look at my truck from up close
     let p:mat4 = perspective(cam.fov, canvas.clientWidth / canvas.clientHeight, 0.1, 1000.0);
     gl.uniformMatrix4fv(uproj, false, p.flatten());
 
