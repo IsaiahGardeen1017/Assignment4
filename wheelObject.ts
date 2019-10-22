@@ -47,7 +47,8 @@ export class wheelObject{
         this.zRotOffset += (zrot * rotSpeed);
 
         //Translations
-        mv = mv.mult(scalem(.08, .08, .08));
+        let scaler:number = .15;
+        mv = mv.mult(scalem(scaler, scaler, scaler));
         mv = mv.mult(rotateY(steeringWheel * maxTurnAngle));
         mv = mv.mult(rotateZ(this.zRotOffset));
 

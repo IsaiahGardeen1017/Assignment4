@@ -61,7 +61,7 @@ export function initShaders(gl:WebGLRenderingContext, vertexShaderId:string, fra
 }
 
 // Get a file as a string using  AJAX
-function loadFileAJAX(name:string) :string {
+export function loadFileAJAX(name:string) :string {
     let xhr:XMLHttpRequest = new XMLHttpRequest(),
         okStatus = document.location.protocol === "file:" ? 0 : 200;
     xhr.open('GET', name, false);

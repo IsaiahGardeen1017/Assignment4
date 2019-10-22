@@ -12,6 +12,8 @@ export class grassObject{
 
     cam:camera;
 
+    numPoints:number;
+
     bufferId:WebGLBuffer;
 
     constructor(gl:WebGLRenderingContext, program:WebGLProgram, cam:camera){
@@ -23,6 +25,7 @@ export class grassObject{
         //Set Geometry
         this.bindToBuffer();
         let points: vec4[] = addGrassPoints();
+        this.numPoints = points.length;
         this.gl.bufferData(this.gl.ARRAY_BUFFER, flatten(points), this.gl.STATIC_DRAW);
     }
 
@@ -46,13 +49,11 @@ export class grassObject{
 
         //Translations
         //mv = mv.mult(rotateY(45));
-        mv = mv.mult(translate(0, 0, 0));
+        mv = mv.mult(translate(0, -0.3, 0));
 
         this.gl.uniformMatrix4fv(this.gl.getUniformLocation(this.program, "model_view"), false, mv.flatten());
-        this.gl.drawArrays(this.gl.TRIANGLES, 0, 240000);    // draw the truck
+        this.gl.drawArrays(this.gl.TRIANGLES, 0, this.numPoints);    // draw the truck
     }
-
-
 }
 
 function addGrassPoints():vec4[] {
@@ -67,9 +68,9 @@ function addGrassPoints():vec4[] {
 }
 
 function addSquare(points:vec4[], x:number, z:number){
-    let max:number = 0.3;
-    let min:number = 0.1;
-    let color:vec4 = new vec4(((Math.random() * (max - min) + min)), 1 - ((Math.random() * (max - min) + min)), ((Math.random() * (max - min) + min)), 1);
+    let max:number = 0.55;
+    let min:number = 0.5;
+    let color:vec4 = new vec4((1 - (Math.random() * (max - min) + min)), (1 - (Math.random() * (max - min) + min)), (1 - (Math.random() * (max - min) + min)), 1);
 
     /*
     let color:vec4 = new vec4(.1, 1, .1, 1);
@@ -77,20 +78,20 @@ function addSquare(points:vec4[], x:number, z:number){
         color = new vec4(0, .9, 0, 1);
     }
     */
-    points.push(new vec4(1 + x,0,0 + z,1));
+    points.push(new vec4(0 + x,0,1 + z,1));
     points.push(color);
     points.push(new vec4(1 + x,0,1 + z,1));
     points.push(color);
-    points.push(new vec4(0 + x,0,1 + z,1));
-    points.push(color);
-
-    color = new vec4(((Math.random() * (max - min) + min)), 1 - ((Math.random() * (max - min) + min)), ((Math.random() * (max - min) + min)), 1);
-
     points.push(new vec4(1 + x,0,0 + z,1));
     points.push(color);
+
+    color = new vec4((1 - (Math.random() * (max - min) + min)), (1 - (Math.random() * (max - min) + min)), (1 - (Math.random() * (max - min) + min)), 1);
+
+    points.push(new vec4(0 + x,0,0 + z,1));
+    points.push(color);
     points.push(new vec4(0 + x,0,1 + z,1));
     points.push(color);
-    points.push(new vec4(0 + x,0,0 + z,1));
+    points.push(new vec4(1 + x,0,0 + z,1));
     points.push(color);
 
 }

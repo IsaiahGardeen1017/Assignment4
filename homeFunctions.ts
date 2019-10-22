@@ -51,6 +51,9 @@ let turnHeadRightDown:boolean = false;
     gl.clearColor(0, 1, 1, 1);
     gl.enable(gl.DEPTH_TEST);
 
+    gl.cullFace(gl.BACK)
+    gl.enable(gl.CULL_FACE)
+
     cam = new camera();
     truck = new truckObject(gl, program, cam);
     grass = new grassObject(gl, program, cam);

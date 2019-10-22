@@ -19,7 +19,7 @@ export class camera{
 
     constructor(){
         this.camDirection = new vec4(0,0,0,1);
-        this.camLocation = new vec4(5, 5, 5, 1);
+        this.camLocation = new vec4(2.5, 2.5, 2.5, 1);
         this.fov = 60;
     }
 
@@ -31,7 +31,7 @@ export class camera{
         if(this.camType != "free") {
             this.camType = "free";
             this.fixed = false;
-            this.camLocation[1] = 5;
+            this.camLocation[1] = 2.5;
             this.fov = 60;
         }
     }
@@ -134,11 +134,11 @@ export class camera{
                 camDir = new vec4((Math.sin(toradians(this.truck.yrot + offset)) * direction[0]) + (Math.cos(toradians(this.truck.yrot + offset)) * direction[2]),0,(Math.cos(toradians(this.truck.yrot + offset)) * direction[0]) - (Math.sin(toradians(this.truck.yrot + offset)) * direction[2]), 0).normalize();
 
                 //How far forward from the origin of the truck that the camera is, arbitrariy set so that it matches the head
-                let camoffset:number = 0.29;
+                let camoffset:number = 0;
 
                 //Puts the camera where the truck is and moves it forward a bit towards the front of the truck
                 //y is 1.55 becasue that happens to be the height of the center of the rendered head
-                this.camLocation = new vec4(this.truck.xoffset + (dir[0] * camoffset), 0.155, this.truck.zoffset + (dir[2] * camoffset), 1);
+                this.camLocation = new vec4(this.truck.xoffset + (dir[0] * camoffset), 0, this.truck.zoffset + (dir[2] * camoffset), 1);
 
                 //+ (dir[0] * camoffset) is used so that the directions always point away from the camera instead of the truck origin
                 //+ (camDir[0] * 2) sets the point wherer the camera is pointed, y is 1.55 because that is the hieght of the camera
