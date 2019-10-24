@@ -163,6 +163,7 @@ export class truckObject{
 
     draw(drawHead:boolean){
         let mv:mat4 = this.cam.look();
+        let lightPosition:mat4 = mv;
         mv = mv.mult(translate(this.xoffset,this.yoffset, this.zoffset));
         mv = mv.mult(rotateY(this.yrot));
 
@@ -191,13 +192,29 @@ export class truckObject{
         mv = mv.mult(rotateX(90));
         mv = mv.mult(rotateY(180));
 
-        //Draw the truck
+        //Draw the Chasis
         this.bindToBuffer();
+
+        let vAmbientDiffuseColor = this.gl.getAttribLocation(this.program, "vAmbientDiffuseColor");
+        let vSpecularColor:GLint = this.gl.getAttribLocation(this.program, "vSpecularColor");
+        let vSpecularExponent:GLint = this.gl.getAttribLocation(this.program, "vSpecularExponent");
+        let light_position:WebGLUniformLocation = this.gl.getUniformLocation(this.program, "light_position");
+        let light_color:WebGLUniformLocation = this.gl.getUniformLocation(this.program, "light_color");
+        let ambient_light:WebGLUniformLocation = this.gl.getUniformLocation(this.program, "ambient_light");
+
+        this.gl.vertexAttrib4fv(vAmbientDiffuseColor, [.5, 0, 0, 1]);
+        this.gl.vertexAttrib4fv(vSpecularColor, [1.0, 1.0, 1.0, 1.0]);
+        this.gl.vertexAttrib1f(vSpecularExponent, 30.0);
+        this.gl.uniform4fv(light_position, lightPosition.mult(new vec4(50, 50, 50, 1)).flatten());
+        this.gl.uniform4fv(light_color, [1, 1, 1, 1]);
+        this.gl.uniform4fv(ambient_light, [.5, .5, .5, 5]);
+
         this.gl.uniformMatrix4fv(this.gl.getUniformLocation(this.program, "model_view"), false, mv.flatten());
         this.gl.drawArrays(this.gl.TRIANGLES, 0, this.numPoints);
     }
 }
 
+//TODO I used to think that racism isn't a big issue anymore and that it was an individual thing.
 
 function addTruckPoints():vec4[]{
     return getPlyPoints("CHASIS.txt");

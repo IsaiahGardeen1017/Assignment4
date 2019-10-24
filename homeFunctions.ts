@@ -4,7 +4,7 @@
 
 import {truckObject} from "./truckObject.js";
 import {grassObject} from "./grassObject.js";
-import {vec4, mat4, initShaders, perspective, lookAt, flatten, translate, rotateY, rotateX, rotateZ, rotate} from './helperfunctions.js';
+import {vec4, mat4, initFileShaders, perspective, lookAt, flatten, translate, rotateY, rotateX, rotateZ, rotate} from './helperfunctions.js';
 import {camera} from "./camera.js";
 
 let gl:WebGLRenderingContext;
@@ -12,6 +12,7 @@ let canvas:HTMLCanvasElement;
 let program:WebGLProgram;
 let umv:WebGLUniformLocation;
 let uproj:WebGLUniformLocation;
+
 
 //increases every frame
 let frames:number;
@@ -41,7 +42,7 @@ let turnHeadRightDown:boolean = false;
     }
 
     //Shaders
-    program = initShaders(gl, "vertex-shader", "fragment-shader")
+    program = initFileShaders(gl, "vshader-phong.glsl", "fshader-phong.glsl");
     gl.useProgram(program);
 
     umv = gl.getUniformLocation(program, "model_view");
@@ -72,7 +73,7 @@ let turnHeadRightDown:boolean = false;
          keyupEvent(event.key);
      });
     frames = 0;
-    window.setInterval(update, 16); //60 fps
+    window.setInterval(update, 32); //60 fps
 }
 
 function update(){
