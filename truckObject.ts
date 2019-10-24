@@ -214,7 +214,6 @@ export class truckObject{
     }
 }
 
-//TODO I used to think that racism isn't a big issue anymore and that it was an individual thing.
 
 function addTruckPoints():vec4[]{
     return getPlyPoints("CHASIS.txt");
