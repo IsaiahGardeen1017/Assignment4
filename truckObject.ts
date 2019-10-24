@@ -173,9 +173,9 @@ export class truckObject{
 
         //Draw the wheels
         let wheelrot:number = this.realVelocity.mag() * this.dir[0];
-        let wheelHight:number = -0.22;
+        let wheelHight:number = -0.15;
         let frontWheelDistance:number = 0.75;
-        let rearWheelDistance:number = -0.75;
+        let rearWheelDistance:number = -0.85;
         let wheelWidth:number = -.4;
         //The 180 rotation rotates it so the wheels face out
         this.frontWheel.spin(wheelrot);
