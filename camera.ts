@@ -19,7 +19,7 @@ export class camera{
 
     constructor(){
         this.camDirection = new vec4(0,0,0,1);
-        this.camLocation = new vec4(2.5, 2.5, 2.5, 1);
+        this.camLocation = new vec4(2.5, 2.5, 0, 1);
         this.fov = 60;
     }
 

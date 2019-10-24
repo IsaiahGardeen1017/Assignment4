@@ -1,7 +1,7 @@
 "use strict";
 
-import {flatten, lookAt, mat4, rotateY, translate, vec4, scalem, rotateZ, toradians} from "./helperfunctions.js";
-import {geometryGenerator} from "./geometryGenerator.js";
+import {flatten, lookAt, mat4, rotateY, translate, vec4, scalem, rotateZ, rotateX, toradians} from "./helperfunctions.js";
+import {getPlyPoints} from "./PlyReader.js";
 
 
 export class wheelObject{
@@ -10,19 +10,22 @@ export class wheelObject{
     vPosition:GLint;
     vColor:GLint;
     bufferId:WebGLBuffer;
-
+    numPoints:number;
     zRotOffset:number = 0;
+    frontWheel:boolean;
 
-    constructor(gl:WebGLRenderingContext, program:WebGLProgram){
+    constructor(gl:WebGLRenderingContext, program:WebGLProgram, frontWheel:boolean){
         this.gl = gl;
         this.program = program;
         this.bufferId = this.gl.createBuffer();
 
+        this.frontWheel = frontWheel;
 
         //Set Geometry
         this.bindToBuffer();
         let points:vec4[];
         points = generateWheelPoints();
+        this.numPoints = points.length;
         this.gl.bufferData(this.gl.ARRAY_BUFFER, flatten(points), this.gl.STATIC_DRAW);
     }
 
@@ -38,114 +41,33 @@ export class wheelObject{
         this.gl.enableVertexAttribArray(this.vColor);
     }
 
-
-    draw(zrot:number, steeringWheel:number, mv:mat4){
-        this.bindToBuffer();
-
+    spin(zrot:number){
         let rotSpeed:number = 90;
-        let maxTurnAngle:number = 15; //Determines how far the wheels turn (arbitrary)
         this.zRotOffset += (zrot * rotSpeed);
+    }
 
+    draw(direction:number, steeringWheel:number, mv:mat4){
+        this.bindToBuffer();
+        let maxTurnAngle:number = 15; //Determines how far the wheels turn (arbitrary)
         //Translations
-        let scaler:number = .15;
+        let scaler:number = .01;
         mv = mv.mult(scalem(scaler, scaler, scaler));
-        mv = mv.mult(rotateY(steeringWheel * maxTurnAngle));
-        mv = mv.mult(rotateZ(this.zRotOffset));
+        if(this.frontWheel){
+            mv = mv.mult(rotateY(steeringWheel * maxTurnAngle));
+        }
+        mv = mv.mult(rotateZ(direction * this.zRotOffset));
+        mv = mv.mult(rotateX(90));
+
 
 
         this.gl.uniformMatrix4fv(this.gl.getUniformLocation(this.program, "model_view"), false, mv.flatten());
-        this.gl.drawArrays(this.gl.TRIANGLES, 0, 1000);    // draw the truck
+        this.gl.drawArrays(this.gl.TRIANGLES, 0, this.numPoints);    // draw the truck
     }
 
 
 }
 
 function generateWheelPoints():vec4[]{
-
-    //Rubber
-    let gg1:geometryGenerator = new geometryGenerator();
-    let rubberThickness:number = 0.4;
-    let rubberDiameter:number = 1;
-    for(let i:number = 0; i <= 11; i++){
-        gg1.addVertex(i, rubberDiameter * Math.cos(toradians(i*30)), rubberDiameter * Math.sin(toradians(i * 30)), rubberThickness);
-    }
-    for(let i:number = 0; i <= 11; i++){
-        gg1.addVertex(i + 12, rubberDiameter * Math.cos(toradians(i*30)), rubberDiameter * Math.sin(toradians(i * 30)), -rubberThickness);
-    }
-    gg1.addVertex(24, 0,0,rubberThickness);
-    gg1.addVertex(25, 0,0,-rubberThickness);
-
-    let rubberColor:vec4 = new vec4(0.1,0.1,0.1,1);
-    for(let i:number = 0; i <= 11; i++){
-        gg1.addTriangle(24, (i+1)%12, i, rubberColor);
-        gg1.addTriangle(25, ((i+1)%12) + 12, i + 12, rubberColor);
-    }
-
-    rubberColor = new vec4(0.05, 0.05, 0.05, 1);
-    for(let i:number = 0; i <= 11; i++) {
-        gg1.addTriangle((i+1)%12, ((i+1)%12) + 12, i, rubberColor);
-        gg1.addTriangle(i, ((i+1)%12) + 12, i+12, rubberColor);
-    }
-
-
-    //Rim
-    let gg2:geometryGenerator = new geometryGenerator();
-    let rimThickness:number = 0.45;
-    let rimDiameter:number = 0.66;
-    let rimColor:vec4 = new vec4(0.75,0.75,0.75,1);
-    let blackColor:vec4 = new vec4(0,0,0,1);
-    for(let i:number = 0; i <= 11; i++){
-        gg2.addVertex(i, rimDiameter * Math.cos(toradians(i*30)), rimDiameter * Math.sin(toradians(i * 30)), rimThickness);
-    }
-    for(let i:number = 0; i <= 11; i++){
-        gg2.addVertex(i + 12, rimDiameter * Math.cos(toradians(i*30)), rimDiameter * Math.sin(toradians(i * 30)), -rimThickness);
-    }
-    gg2.addVertex(24, 0,0,rimThickness);
-    gg2.addVertex(25, 0,0,-rimThickness);
-
-    for(let i:number = 0; i <= 11; i++){
-        let color:vec4 = rimColor;
-        if(i%2 == 0){
-            color = blackColor;
-        }
-        gg2.addTriangle(24, (i+1)%12, i, color);
-        gg2.addTriangle(25, ((i+1)%12) + 12, i + 12, color);
-    }
-
-    for(let i:number = 0; i <= 11; i++) {
-        gg2.addTriangle((i+1)%12, ((i+1)%12) + 12, i, rimColor);
-        gg2.addTriangle(i, ((i+1)%12) + 12, i+12, rimColor);
-    }
-
-    //HubCap
-    let gg3:geometryGenerator = new geometryGenerator();
-    let hubcapThickness:number = 0.5;
-    let hubcapDiameter:number = 0.4;
-    rimColor = new vec4(.6,.6,.6,1)
-    for(let i:number = 0; i <= 11; i++){
-        gg3.addVertex(i, hubcapDiameter * Math.cos(toradians(i*30)), hubcapDiameter * Math.sin(toradians(i * 30)), hubcapThickness);
-    }
-    for(let i:number = 0; i <= 11; i++){
-        gg3.addVertex(i + 12, hubcapDiameter * Math.cos(toradians(i*30)), hubcapDiameter * Math.sin(toradians(i * 30)), -hubcapThickness);
-    }
-    gg3.addVertex(24, 0,0,hubcapThickness);
-    gg3.addVertex(25, 0,0,-hubcapThickness);
-
-    for(let i:number = 0; i <= 11; i++){
-        let color:vec4 = rimColor;
-        if(i%2 == 0){
-            color = blackColor;
-        }
-        gg3.addTriangle(24, (i+1)%12, i, rimColor);
-        gg3.addTriangle(25, ((i+1)%12) + 12, i + 12, rimColor);
-    }
-
-    for(let i:number = 0; i <= 11; i++) {
-        gg3.addTriangle((i+1)%12, ((i+1)%12) + 12, i, rimColor);
-        gg3.addTriangle(i, ((i+1)%12) + 12, i+12, rimColor);
-    }
-
-    //return gg3.getTrianglePoints();
-    return gg1.getTrianglePoints().concat(gg2.getTrianglePoints()).concat(gg3.getTrianglePoints());
+    return getPlyPoints("REARWHEEL.txt");
 }
 

@@ -3,7 +3,6 @@
 import {flatten, lookAt, mat4, rotateY, rotateX, rotateZ, translate, vec4, vec2, scalem} from "./helperfunctions.js";
 import {wheelObject} from "./wheelObject.js";
 import {headObject} from "./headObject.js";
-import {geometryGenerator, expandGeometry} from "./geometryGenerator.js";
 import {getPlyPoints} from "./PlyReader.js";
 import {camera} from "./camera";
 
@@ -20,10 +19,10 @@ export class truckObject{
     mass:number = 1500;
 
 
-    airdrag:number = 50; //Coefficient applied to engineForce
-    roaddrag:number = 5; //Coefficient applied to rolling resistance
+    airdrag:number = 25; //Coefficient applied to air resistance force (Scales quadratically)
+    roaddrag:number = 2; //Coefficient applied to rolling resistance (Scales Linearly)
 
-    horsePower:number = 1; //Coefficient applied to engineForce
+    horsePower:number = 5; //Coefficient applied to engineForce
     breakpower:number = 5; //Coefficient applied to brakeForce
 
     gasPedal:number = 0;
@@ -32,6 +31,7 @@ export class truckObject{
     gasPedalSpeed:number = .03;
     brakePedalSpeed:number = .03;
     steeringWheelSpeed:number = .05;
+    turnRadius:number = 15;
 
     funmode:boolean = true;
 
@@ -60,8 +60,8 @@ export class truckObject{
         this.gl = gl;
         this.program = program;
         this.bufferId = this.gl.createBuffer();
-        this.frontWheel = new wheelObject(gl, program);
-        this.rearWheel = new wheelObject(gl, program);
+        this.frontWheel = new wheelObject(gl, program, true);
+        this.rearWheel = new wheelObject(gl, program, false);
         this.head = new headObject(gl, program);
         this.cam = cam;
         //Set Geometry
@@ -107,12 +107,12 @@ export class truckObject{
         this.engineForce = this.dir.scale(this.gasPedal);
         this.brakeForce = this.dir.scale(-this.brakePedal);
 
-        //Handles amount of turning the truck does (both visually and change in velocity direction)
-        let turnRadius:number = 1.5;
+        let turnR:number = this.turnRadius;
+
         if(this.dir[0] < 0){//reverse
-            turnRadius = -2;
+            turnR = -turnR;
         }
-        this.yrot += (25 * this.velocity.mag() * this.steeringWheel) * turnRadius;
+        this.yrot += (this.velocity.mag() * this.steeringWheel * turnR);
 
 
         //Forces acting against the truck (Top speed is a result of this)
@@ -161,32 +161,35 @@ export class truckObject{
     }
 
 
-    draw(ticks:number){
+    draw(drawHead:boolean){
         let mv:mat4 = this.cam.look();
-        mv = mv.mult(translate(0,0,0));
         mv = mv.mult(translate(this.xoffset,this.yoffset, this.zoffset));
-        mv = mv.mult(rotateY(this.yrot + 180));
+        mv = mv.mult(rotateY(this.yrot));
 
         //Draw the head
-        this.head.draw(mv.mult(translate(.1, 0, 0)));//Where the head is in relation to the truck
-
+        if(drawHead) {
+            this.head.draw(mv.mult(translate(.1, 0, 0)));//Where the head is in relation to the truck
+        }
 
         //Draw the wheels
         let wheelrot:number = this.realVelocity.mag() * this.dir[0];
         let wheelHight:number = -0.22;
-        let frontWheel:number = -.25;
-        let rearWheel:number = 0.75;
+        let frontWheelDistance:number = 0.75;
+        let rearWheelDistance:number = -0.75;
         let wheelWidth:number = -.4;
-        this.frontWheel.draw(wheelrot, this.steeringWheel, mv.mult(translate(frontWheel, wheelHight, wheelWidth)));
-        this.frontWheel.draw(wheelrot, this.steeringWheel, mv.mult(translate(frontWheel, wheelHight, -wheelWidth)));
-
-        this.rearWheel.draw(wheelrot, 0, mv.mult(translate(rearWheel, wheelHight, wheelWidth)));
-        this.rearWheel.draw(wheelrot, 0, mv.mult(translate(rearWheel, wheelHight, -wheelWidth)));
+        //The 180 rotation rotates it so the wheels face out
+        this.frontWheel.spin(wheelrot);
+        this.frontWheel.draw(1, this.steeringWheel, mv.mult(translate(frontWheelDistance, wheelHight, wheelWidth)).mult(rotateY(180)));
+        this.frontWheel.draw(-1, this.steeringWheel, mv.mult(translate(frontWheelDistance, wheelHight, -wheelWidth)));
+        this.rearWheel.spin(wheelrot);
+        this.rearWheel.draw(1, 0, mv.mult(translate(rearWheelDistance, wheelHight, wheelWidth)).mult(rotateY(180)));
+        this.rearWheel.draw(-1, 0, mv.mult(translate(rearWheelDistance, wheelHight, -wheelWidth)));
 
         //Truck only transformations
         let scaler:number = 0.01;//scale size of truck body
         mv = mv.mult(scalem(scaler,scaler,scaler,));
-        mv = mv.mult(rotateX(-90));
+        mv = mv.mult(rotateX(90));
+        mv = mv.mult(rotateY(180));
 
         //Draw the truck
         this.bindToBuffer();
@@ -197,5 +200,5 @@ export class truckObject{
 
 
 function addTruckPoints():vec4[]{
-    return getPlyPoints("FinalF1.txt");
+    return getPlyPoints("CHASIS.txt");
 }

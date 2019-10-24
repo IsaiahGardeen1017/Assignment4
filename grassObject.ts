@@ -43,13 +43,13 @@ export class grassObject{
     }
 
 
-    draw(ticks:number){
+    draw(){
         this.bindToBuffer();
         let mv:mat4 = this.cam.look();
 
         //Translations
         //mv = mv.mult(rotateY(45));
-        mv = mv.mult(translate(0, -0.3, 0));
+        mv = mv.mult(translate(0, -1, 0));
 
         this.gl.uniformMatrix4fv(this.gl.getUniformLocation(this.program, "model_view"), false, mv.flatten());
         this.gl.drawArrays(this.gl.TRIANGLES, 0, this.numPoints);    // draw the truck

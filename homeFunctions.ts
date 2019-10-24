@@ -14,7 +14,7 @@ let umv:WebGLUniformLocation;
 let uproj:WebGLUniformLocation;
 
 //increases every frame
-let ticks:number;
+let frames:number;
 
 let truck:truckObject;
 let grass:grassObject;
@@ -71,18 +71,18 @@ let turnHeadRightDown:boolean = false;
      window.addEventListener("keyup", function(event){
          keyupEvent(event.key);
      });
-    ticks = 0;
+    frames = 0;
     window.setInterval(update, 16); //60 fps
 }
 
 function update(){
-    ticks++;
+    frames++;
 
     if(!increaseBreak && !reverse || !increaseGasPedal && reverse){
         breakingPeriodStart = -1;
     }
-    //I wrote this next bit in a chick fil a parking lot at midnight and somehow it works!
-    let breakDelay:number = 45;
+    //I wrote this next bit in a chick fil a parking lot at midnight and somehow it works
+    let breakDelay:number = 120;
     if(!reverse || !truck.funmode) {
         if(!truck.funmode) {
             reverse = true;
@@ -100,8 +100,8 @@ function update(){
                 truck.gasPedal = 0;
             }
             if (breakingPeriodStart == -1 && truck.funmode) {
-                breakingPeriodStart = ticks;
-            }else if(breakingPeriodStart + breakDelay == ticks && truck.funmode){
+                breakingPeriodStart = frames;
+            }else if(breakingPeriodStart + breakDelay == frames && truck.funmode){
                 reverse = true;
                 breakingPeriodStart = -1;
                 truck.dir = new vec4(truck.dir[0] * -1, 0,0,0);
@@ -115,8 +115,8 @@ function update(){
         }
         if (increaseGasPedal) {
             if (breakingPeriodStart == -1 && truck.funmode) {
-                breakingPeriodStart = ticks;
-            }else if(breakingPeriodStart + breakDelay == ticks  && truck.funmode){
+                breakingPeriodStart = frames;
+            }else if(breakingPeriodStart + breakDelay == frames  && truck.funmode){
                 reverse = false;
                 breakingPeriodStart = -1;
                 truck.dir = new vec4(truck.dir[0] * -1, 0,0,0);
@@ -124,7 +124,6 @@ function update(){
             truck.brakePedal += truck.brakePedalSpeed * 2;
         }
     }
-
     if(spaceDown){
         if(truck.funmode){
             truck.brakePedal += truck.brakePedalSpeed * 2;
@@ -135,7 +134,6 @@ function update(){
             truck.velocity = new vec4(0,0,0,0);
         }
     }
-
     if(turnWheelLeft){
         truck.steeringWheel += truck.steeringWheelSpeed * 2;
     }
@@ -146,7 +144,6 @@ function update(){
         let r:number = Math.floor(255 * truck.brakePedal);
         let g:number = Math.floor(255 * truck.gasPedal);
         document.getElementById("revs").style.fill = 'rgb(' + r + "," + g + ",0)";
-
     truck.update();
     cam.update();
     if(truck.funmode) {
@@ -163,6 +160,7 @@ function update(){
     }
     requestAnimationFrame(renderFrame);
 }
+
 
 function keydownEvent(key:string){
     switch(key) {
@@ -247,11 +245,11 @@ function toggleGameMode(input:any){
 function renderFrame(){
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    //I know the near value is small but I like to be able to look at my truck from up close
-    let p:mat4 = perspective(cam.fov, canvas.clientWidth / canvas.clientHeight, 0.1, 1000.0);
+
+    let p:mat4 = perspective(cam.fov, canvas.clientWidth / canvas.clientHeight, 0.01, 100.0);
     gl.uniformMatrix4fv(uproj, false, p.flatten());
 
-    truck.draw(ticks);
-    grass.draw(ticks);
+    truck.draw(!(cam.camType === "viewpoint"));
+    grass.draw();
 
  }
