@@ -49,8 +49,13 @@ export class truckObject{
 
     program:WebGLProgram;
     gl:WebGLRenderingContext;
+
     vPosition:GLint;
     vColor:GLint;
+    vAmbientDiffuseColor:GLint;
+    vSpecularColor:GLint;
+    vSpecularExponent:GLint;
+
 
     numPoints:number;
 
@@ -150,14 +155,30 @@ export class truckObject{
     }
 
     bindToBuffer(){
-            this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.bufferId);
-            this.vPosition = this.gl.getAttribLocation(this.program, "vPosition");
-            this.gl.vertexAttribPointer(this.vPosition, 4, this.gl.FLOAT, false, 32, 0);
-            this.gl.enableVertexAttribArray(this.vPosition);
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.bufferId);
 
-            this.vColor = this.gl.getAttribLocation(this.program, "vColor");
-            this.gl.vertexAttribPointer(this.vColor, 4, this.gl.FLOAT, false, 32, 16);
-            this.gl.enableVertexAttribArray(this.vColor);
+        this.vPosition = this.gl.getAttribLocation(this.program, "vPosition");
+        this.gl.vertexAttribPointer(this.vPosition, 4, this.gl.FLOAT, false, 96, 0);
+        this.gl.enableVertexAttribArray(this.vPosition);
+
+        this.vColor = this.gl.getAttribLocation(this.program, "vNormal");
+        this.gl.vertexAttribPointer(this.vColor, 4, this.gl.FLOAT, false, 96, 16);
+        this.gl.enableVertexAttribArray(this.vColor);
+
+        this.vAmbientDiffuseColor = this.gl.getAttribLocation(this.program, "vAmbientDiffuseColor");
+        this.gl.vertexAttribPointer(this.vColor, 4, this.gl.FLOAT, false, 96, 32);
+        this.gl.enableVertexAttribArray(this.vColor);
+
+        this.vSpecularColor = this.gl.getAttribLocation(this.program, "vSpecularColor");
+        this.gl.vertexAttribPointer(this.vColor, 4, this.gl.FLOAT, false, 96, 48);
+        this.gl.enableVertexAttribArray(this.vColor);
+
+        this.vSpecularExponent = this.gl.getAttribLocation(this.program, "vSpecularExponent");
+        this.gl.vertexAttribPointer(this.vColor, 4, this.gl.FLOAT, false, 96, 64);
+        this.gl.enableVertexAttribArray(this.vColor);
+
+
+
     }
 
 
