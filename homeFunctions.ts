@@ -12,6 +12,7 @@ let canvas:HTMLCanvasElement;
 let program:WebGLProgram;
 let umv:WebGLUniformLocation;
 let uproj:WebGLUniformLocation;
+let ulp:WebGLUniformLocation;
 
 //increases every frame
 let frames:number;
@@ -72,7 +73,7 @@ let turnHeadRightDown:boolean = false;
          keyupEvent(event.key);
      });
     frames = 0;
-    window.setInterval(update, 16); //60 fps
+    window.setInterval(update, 32);
 }
 
 function update(){
@@ -250,6 +251,6 @@ function renderFrame(){
     gl.uniformMatrix4fv(uproj, false, p.flatten());
 
     truck.draw(!(cam.camType === "viewpoint"));
-    grass.draw();
+    //grass.draw();
 
  }

@@ -23,7 +23,7 @@ export class truckObject{
     roaddrag:number = 2; //Coefficient applied to rolling resistance (Scales Linearly)
 
     horsePower:number = 5; //Coefficient applied to engineForce
-    breakpower:number = 5; //Coefficient applied to brakeForce
+    breakpower:number = 10; //Coefficient applied to brakeForce
 
     gasPedal:number = 0;
     brakePedal:number = 0;
@@ -168,7 +168,7 @@ export class truckObject{
 
         //Draw the head
         if(drawHead) {
-            this.head.draw(mv.mult(translate(.1, 0, 0)));//Where the head is in relation to the truck
+            //this.head.draw(mv.mult(translate(.1, 0, 0)));//Where the head is in relation to the truck
         }
 
         //Draw the wheels
@@ -179,11 +179,11 @@ export class truckObject{
         let wheelWidth:number = -.4;
         //The 180 rotation rotates it so the wheels face out
         this.frontWheel.spin(wheelrot);
-        this.frontWheel.draw(1, this.steeringWheel, mv.mult(translate(frontWheelDistance, wheelHight, wheelWidth)).mult(rotateY(180)));
-        this.frontWheel.draw(-1, this.steeringWheel, mv.mult(translate(frontWheelDistance, wheelHight, -wheelWidth)));
+        //this.frontWheel.draw(1, this.steeringWheel, mv.mult(translate(frontWheelDistance, wheelHight, wheelWidth)).mult(rotateY(180)));
+        //this.frontWheel.draw(-1, this.steeringWheel, mv.mult(translate(frontWheelDistance, wheelHight, -wheelWidth)));
         this.rearWheel.spin(wheelrot);
-        this.rearWheel.draw(1, 0, mv.mult(translate(rearWheelDistance, wheelHight, wheelWidth)).mult(rotateY(180)));
-        this.rearWheel.draw(-1, 0, mv.mult(translate(rearWheelDistance, wheelHight, -wheelWidth)));
+        //this.rearWheel.draw(1, 0, mv.mult(translate(rearWheelDistance, wheelHight, wheelWidth)).mult(rotateY(180)));
+        //this.rearWheel.draw(-1, 0, mv.mult(translate(rearWheelDistance, wheelHight, -wheelWidth)));
 
         //Truck only transformations
         let scaler:number = 0.01;//scale size of truck body
