@@ -4,7 +4,7 @@
 
 import {truckObject} from "./truckObject.js";
 import {grassObject} from "./grassObject.js";
-import {vec4, mat4, initShaders, perspective, lookAt, flatten, translate, rotateY, rotateX, rotateZ, rotate} from './helperfunctions.js';
+import {vec4, mat4, initFileShaders, perspective, lookAt, flatten, translate, rotateY, rotateX, rotateZ, rotate} from './helperfunctions.js';
 import {camera} from "./camera.js";
 
 let gl:WebGLRenderingContext;
@@ -13,6 +13,8 @@ let program:WebGLProgram;
 let umv:WebGLUniformLocation;
 let uproj:WebGLUniformLocation;
 let ulp:WebGLUniformLocation;
+let ulc:WebGLUniformLocation;
+let ual:WebGLUniformLocation;
 
 //increases every frame
 let frames:number;
@@ -42,11 +44,14 @@ let turnHeadRightDown:boolean = false;
     }
 
     //Shaders
-    program = initShaders(gl, "vertex-shader", "fragment-shader")
+    program = initFileShaders(gl, "vshader-phong.glsl", "fshader-phong.glsl")
     gl.useProgram(program);
 
     umv = gl.getUniformLocation(program, "model_view");
     uproj = gl.getUniformLocation(program, "projection");
+    ulp = gl.getUniformLocation(program, "light_position");
+    ulc = gl.getUniformLocation(program, "light_color");
+    ual = gl.getUniformLocation(program, "ambient_light");
 
     gl.viewport(0,0, gl.drawingBufferWidth, gl.drawingBufferHeight);
     gl.clearColor(0, 1, 1, 1);
@@ -249,8 +254,10 @@ function renderFrame(){
 
     let p:mat4 = perspective(cam.fov, canvas.clientWidth / canvas.clientHeight, 0.01, 100.0);
     gl.uniformMatrix4fv(uproj, false, p.flatten());
+    gl.uniform4fv(ulc, [1, 1, 1, 1]);
+    gl.uniform4fv(ual, [.5, .5, .5, 5]);
 
-    truck.draw(!(cam.camType === "viewpoint"));
+    truck.draw(!(cam.camType === "viewpoint"), ulp);
     //grass.draw();
 
  }

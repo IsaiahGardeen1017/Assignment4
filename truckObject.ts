@@ -50,7 +50,7 @@ export class truckObject{
     program:WebGLProgram;
     gl:WebGLRenderingContext;
     vPosition:GLint;
-    vColor:GLint;
+    vNormal:GLint;
 
     numPoints:number;
 
@@ -155,14 +155,15 @@ export class truckObject{
             this.gl.vertexAttribPointer(this.vPosition, 4, this.gl.FLOAT, false, 32, 0);
             this.gl.enableVertexAttribArray(this.vPosition);
 
-            this.vColor = this.gl.getAttribLocation(this.program, "vColor");
-            this.gl.vertexAttribPointer(this.vColor, 4, this.gl.FLOAT, false, 32, 16);
-            this.gl.enableVertexAttribArray(this.vColor);
+            this.vNormal = this.gl.getAttribLocation(this.program, "vNormal");
+            this.gl.vertexAttribPointer(this.vNormal, 4, this.gl.FLOAT, false, 32, 16);
+            this.gl.enableVertexAttribArray(this.vNormal);
     }
 
 
-    draw(drawHead:boolean){
+    draw(drawHead: boolean, ulp: WebGLUniformLocation){
         let mv:mat4 = this.cam.look();
+        let lightPosition:mat4 = mv;
         mv = mv.mult(translate(this.xoffset,this.yoffset, this.zoffset));
         mv = mv.mult(rotateY(this.yrot));
 
@@ -193,6 +194,10 @@ export class truckObject{
 
         //Draw the truck
         this.bindToBuffer();
+        this.gl.uniform4fv(ulp, lightPosition.mult(new vec4(1, 1, 1, 1)).flatten());
+        this.gl.vertexAttrib4fv(this.gl.getAttribLocation(this.program, "vAmbientDiffuseColor"), [0.5, 0.0, 0.0, 1.0]);
+        this.gl.vertexAttrib4fv(this.gl.getAttribLocation(this.program, "vSpecularColor"), [1.0, 1.0, 1.0, 1.0]);
+        this.gl.vertexAttrib1f(this.gl.getAttribLocation(this.program, "vSpecularExponent"), 30.0);
         this.gl.uniformMatrix4fv(this.gl.getUniformLocation(this.program, "model_view"), false, mv.flatten());
         this.gl.drawArrays(this.gl.TRIANGLES, 0, this.numPoints);
     }

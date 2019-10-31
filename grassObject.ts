@@ -37,7 +37,7 @@ export class grassObject{
         this.gl.vertexAttribPointer(this.vPosition, 4, this.gl.FLOAT, false, 32, 0);
         this.gl.enableVertexAttribArray(this.vPosition);
 
-        this.vColor = this.gl.getAttribLocation(this.program, "vColor");
+        this.vColor = this.gl.getAttribLocation(this.program, "vNormal");
         this.gl.vertexAttribPointer(this.vColor, 4, this.gl.FLOAT, false, 32, 16);
         this.gl.enableVertexAttribArray(this.vColor);
     }
