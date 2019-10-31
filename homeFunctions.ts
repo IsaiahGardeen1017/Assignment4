@@ -57,8 +57,8 @@ let turnHeadRightDown:boolean = false;
     gl.clearColor(0, 1, 1, 1);
     gl.enable(gl.DEPTH_TEST);
 
-    gl.cullFace(gl.BACK)
-    gl.enable(gl.CULL_FACE)
+    gl.cullFace(gl.BACK);
+    gl.enable(gl.CULL_FACE);
 
     cam = new camera();
     truck = new truckObject(gl, program, cam);
@@ -257,7 +257,7 @@ function renderFrame(){
     gl.uniform4fv(ulc, [1, 1, 1, 1]);
     gl.uniform4fv(ual, [.5, .5, .5, 5]);
 
-    truck.draw(!(cam.camType === "viewpoint"), ulp);
+    truck.draw(!(cam.camType === "viewpoint"));
     //grass.draw();
 
  }

@@ -36,5 +36,10 @@ void main()
     if(dot(nL, nN) < 0.0){
         spec = vec4(0,0,0,1); //no light on the back side, Blim-Phong Issue
     }
+
+
     fColor = amb + diff + spec; //pass forward to fragment shader
+    //fColor = fNormal;
+    //fColor = vec4(nN, 1);
+
 }

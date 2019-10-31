@@ -28,9 +28,9 @@ export class truckObject{
     gasPedal:number = 0;
     brakePedal:number = 0;
     steeringWheel:number = 0;
-    gasPedalSpeed:number = .03;
-    brakePedalSpeed:number = .03;
-    steeringWheelSpeed:number = .05;
+    gasPedalSpeed:number = .06;
+    brakePedalSpeed:number = .06;
+    steeringWheelSpeed:number = .1;
     turnRadius:number = 15;
 
     funmode:boolean = true;
@@ -161,7 +161,7 @@ export class truckObject{
     }
 
 
-    draw(drawHead: boolean, ulp: WebGLUniformLocation){
+    draw(drawHead: boolean){
         let mv:mat4 = this.cam.look();
         let lightPosition:mat4 = mv;
         mv = mv.mult(translate(this.xoffset,this.yoffset, this.zoffset));
@@ -194,7 +194,7 @@ export class truckObject{
 
         //Draw the truck
         this.bindToBuffer();
-        this.gl.uniform4fv(ulp, lightPosition.mult(new vec4(1, 1, 1, 1)).flatten());
+        this.gl.uniform4fv(this.gl.getUniformLocation(this.program, "light_position"), (lightPosition.mult(new vec4(0, 10, 0, 1))).flatten());
         this.gl.vertexAttrib4fv(this.gl.getAttribLocation(this.program, "vAmbientDiffuseColor"), [0.5, 0.0, 0.0, 1.0]);
         this.gl.vertexAttrib4fv(this.gl.getAttribLocation(this.program, "vSpecularColor"), [1.0, 1.0, 1.0, 1.0]);
         this.gl.vertexAttrib1f(this.gl.getAttribLocation(this.program, "vSpecularExponent"), 30.0);

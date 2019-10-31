@@ -13,6 +13,7 @@ export function initShaders(gl:WebGLRenderingContext, vertexShaderId:string, fra
     let vertShdr:WebGLShader;
     let fragShdr:WebGLShader;
 
+
     let vertElem:HTMLScriptElement = <HTMLScriptElement>document.getElementById(vertexShaderId);
     if (!vertElem) {
         alert("Unable to load vertex shader " + vertexShaderId);

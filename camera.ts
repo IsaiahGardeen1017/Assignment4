@@ -14,10 +14,11 @@ export class camera{
     zoomSpeed:number = 1;
     dollySpeed:number = .5;
     fixed:boolean = false;
-    camType:string = "free";
+    camType:string;
     lastValidDirection:vec4 = new vec4(1, 0, 1, 0).normalize();
 
     constructor(){
+        this.camType = "free";
         this.camDirection = new vec4(0,0,0,1);
         this.camLocation = new vec4(2.5, 2.5, 0, 1);
         this.fov = 60;
