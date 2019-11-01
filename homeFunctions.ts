@@ -2,8 +2,8 @@
  "use strict";
 
 
-import {truckObject} from "./truckObject.js";
-import {grassObject} from "./grassObject.js";
+import {truckObject} from "./GeometryObjects/truckObject.js";
+import {grassObject} from "./GeometryObjects/grassObject.js";
 import {vec4, mat4, initFileShaders, perspective, lookAt, flatten, translate, rotateY, rotateX, rotateZ, rotate} from './helperfunctions.js';
 import {camera} from "./camera.js";
 

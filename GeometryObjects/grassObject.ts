@@ -1,8 +1,8 @@
 "use strict";
 
-import {flatten, lookAt, mat4, rotateY, translate, vec4} from "./helperfunctions.js";
-import {geometryGenerator} from "./geometryGenerator.js";
-import {camera} from "./camera";
+import {flatten, lookAt, mat4, rotateY, translate, vec4} from "../helperfunctions.js";
+import {geometryGenerator} from "../geometryGenerator.js";
+import {camera} from "../camera";
 
 export class grassObject{
     program:WebGLProgram;

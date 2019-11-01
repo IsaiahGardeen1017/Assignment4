@@ -1,10 +1,10 @@
 "use strict";
 
 import {flatten, lookAt, mat4, rotateY, rotateX, rotateZ, translate, vec4, vec2, scalem, toradians} from "./helperfunctions.js";
-import {wheelObject} from "./wheelObject.js";
+import {wheelObject} from "./GeometryObjects/wheelObject.js";
 import {geometryGenerator, expandGeometry} from "./geometryGenerator.js";
-import {truckObject} from "./truckObject";
-import {grassObject} from "./grassObject";
+import {truckObject} from "./GeometryObjects/truckObject";
+import {grassObject} from "./GeometryObjects/grassObject";
 
 export class camera{
     truck:truckObject;

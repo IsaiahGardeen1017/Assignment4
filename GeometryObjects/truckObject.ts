@@ -1,10 +1,10 @@
 "use strict";
 
-import {flatten, lookAt, mat4, rotateY, rotateX, rotateZ, translate, vec4, vec2, scalem} from "./helperfunctions.js";
+import {flatten, lookAt, mat4, rotateY, rotateX, rotateZ, translate, vec4, vec2, scalem} from "../helperfunctions.js";
 import {wheelObject} from "./wheelObject.js";
 import {headObject} from "./headObject.js";
-import {getPlyPoints} from "./PlyReader.js";
-import {camera} from "./camera";
+import {getPlyPoints} from "../PlyReader.js";
+import {camera} from "../camera";
 
 export class truckObject{
     realVelocity:vec4 = new vec4(0,0,0,0); //What the truck actually moves
@@ -180,11 +180,11 @@ export class truckObject{
         let wheelWidth:number = -.4;
         //The 180 rotation rotates it so the wheels face out
         this.frontWheel.spin(wheelrot);
-        //this.frontWheel.draw(1, this.steeringWheel, mv.mult(translate(frontWheelDistance, wheelHight, wheelWidth)).mult(rotateY(180)));
-        //this.frontWheel.draw(-1, this.steeringWheel, mv.mult(translate(frontWheelDistance, wheelHight, -wheelWidth)));
+        this.frontWheel.draw(1, this.steeringWheel, mv.mult(translate(frontWheelDistance, wheelHight, wheelWidth)).mult(rotateY(180)));
+        this.frontWheel.draw(-1, this.steeringWheel, mv.mult(translate(frontWheelDistance, wheelHight, -wheelWidth)));
         this.rearWheel.spin(wheelrot);
-        //this.rearWheel.draw(1, 0, mv.mult(translate(rearWheelDistance, wheelHight, wheelWidth)).mult(rotateY(180)));
-        //this.rearWheel.draw(-1, 0, mv.mult(translate(rearWheelDistance, wheelHight, -wheelWidth)));
+        this.rearWheel.draw(1, 0, mv.mult(translate(rearWheelDistance, wheelHight, wheelWidth)).mult(rotateY(180)));
+        this.rearWheel.draw(-1, 0, mv.mult(translate(rearWheelDistance, wheelHight, -wheelWidth)));
 
         //Truck only transformations
         let scaler:number = 0.01;//scale size of truck body
