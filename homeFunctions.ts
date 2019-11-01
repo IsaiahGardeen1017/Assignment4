@@ -44,7 +44,7 @@ let turnHeadRightDown:boolean = false;
     }
 
     //Shaders
-    program = initFileShaders(gl, "vshader-phong.glsl", "fshader-phong.glsl")
+    program = initFileShaders(gl, "./Shaders/vshader-phong.glsl", "./Shaders/fshader-phong.glsl")
     gl.useProgram(program);
 
     umv = gl.getUniformLocation(program, "model_view");
