@@ -1,8 +1,7 @@
 "use strict";
 
-import {flatten, lookAt, mat4, rotateY, translate, vec4, scalem, rotateZ, rotateX, toradians} from "../helperfunctions.js";
-import {geometryGenerator} from "../geometryGenerator.js";
-import {getPlyPoints} from "../PlyReader.js";
+import {flatten, lookAt, mat4, rotateY, translate, vec4, scalem, rotateZ, rotateX, toradians} from "./helperfunctions.js";
+import {getPlyPoints} from "./PlyReader.js";
 
 
 export class headObject{
@@ -63,7 +62,12 @@ export class headObject{
         mv = mv.mult(rotateX(-90));
 
 
+        this.gl.vertexAttrib4fv(this.gl.getAttribLocation(this.program, "vAmbientColor"), [1.0, 1.0, 1.0, 1.0]);
+        this.gl.vertexAttrib4fv(this.gl.getAttribLocation(this.program, "vDiffuseColor"), [1.0, 1.0, 1.0, 1.0]);
+        this.gl.vertexAttrib4fv(this.gl.getAttribLocation(this.program, "vSpecularColor"), [1.0, 1.0, 1.0, 1.0]);
+        this.gl.vertexAttrib1f(this.gl.getAttribLocation(this.program, "vSpecularExponent"), 50.0);
         this.gl.uniformMatrix4fv(this.gl.getUniformLocation(this.program, "model_view"), false, mv.flatten());
+        this.gl.drawArrays(this.gl.TRIANGLES, 0, this.numPoints);
         this.gl.drawArrays(this.gl.TRIANGLES, 0, this.numPoints);
     }
 

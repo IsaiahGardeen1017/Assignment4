@@ -2,7 +2,8 @@
 
 in vec4 vPosition;
 in vec4 vNormal;
-in vec4 vAmbientDiffuseColor; //material color
+in vec4 vDiffuseColor; //material color
+in vec4 vAmbientColor; //material color
 in vec4 vSpecularColor;
 in float vSpecularExponent;
 
@@ -11,7 +12,8 @@ out vec3 N;
 out vec3 H;
 
 out vec4 fNormal;
-out vec4 fAmbientDiffuseColor;
+out vec4 fAmbientColor;
+out vec4 fDiffuseColor;
 out vec4 fSpecularColor;
 out float fSpecularExponent;
 
@@ -30,7 +32,8 @@ void main(){
     gl_Position = projection * veyepos;
 
     fNormal = vNormal;
-    fAmbientDiffuseColor = vAmbientDiffuseColor;
+    fAmbientColor = vAmbientColor;
+    fDiffuseColor = vDiffuseColor;
     fSpecularColor = vSpecularColor;
     fSpecularExponent = vSpecularExponent;
 }

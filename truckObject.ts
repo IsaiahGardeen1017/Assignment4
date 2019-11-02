@@ -1,14 +1,13 @@
 "use strict";
 
-import {flatten, lookAt, mat4, rotateY, rotateX, rotateZ, translate, vec4, vec2, scalem} from "../helperfunctions.js";
+import {flatten, lookAt, mat4, rotateY, rotateX, rotateZ, translate, vec4, vec2, scalem} from "./helperfunctions.js";
 import {wheelObject} from "./wheelObject.js";
 import {headObject} from "./headObject.js";
-import {getPlyPoints} from "../PlyReader.js";
-import {camera} from "../camera";
+import {getPlyPoints} from "./PlyReader.js";
+import {camera} from "./camera";
 
 export class truckObject{
     realVelocity:vec4 = new vec4(0,0,0,0); //What the truck actually moves
-
 
     //Directions of the following in relation to the truck body (only in x direction, can probably not use vec4)
     velocity:vec4 = new vec4(0,0,0,0);
@@ -17,7 +16,6 @@ export class truckObject{
     dir:vec4 = new vec4(1,0,0,0);//TODO see if i can delete
 
     mass:number = 1500;
-
 
     airdrag:number = 25; //Coefficient applied to air resistance force (Scales quadratically)
     roaddrag:number = 2; //Coefficient applied to rolling resistance (Scales Linearly)
@@ -169,7 +167,7 @@ export class truckObject{
 
         //Draw the head
         if(drawHead) {
-            //this.head.draw(mv.mult(translate(.1, 0, 0)));//Where the head is in relation to the truck
+            this.head.draw(mv.mult(translate(.1, 0, 0)));//Where the head is in relation to the truck
         }
 
         //Draw the wheels
@@ -195,9 +193,11 @@ export class truckObject{
         //Draw the truck
         this.bindToBuffer();
         this.gl.uniform4fv(this.gl.getUniformLocation(this.program, "light_position"), (lightPosition.mult(new vec4(0, 10, 0, 1))).flatten());
-        this.gl.vertexAttrib4fv(this.gl.getAttribLocation(this.program, "vAmbientDiffuseColor"), [0.5, 0.0, 0.0, 1.0]);
+
+        this.gl.vertexAttrib4fv(this.gl.getAttribLocation(this.program, "vAmbientColor"), [0.5, 0.0, 0.0, 1.0]);
+        this.gl.vertexAttrib4fv(this.gl.getAttribLocation(this.program, "vDiffuseColor"), [0.5, 0.0, 0.0, 1.0]);
         this.gl.vertexAttrib4fv(this.gl.getAttribLocation(this.program, "vSpecularColor"), [1.0, 1.0, 1.0, 1.0]);
-        this.gl.vertexAttrib1f(this.gl.getAttribLocation(this.program, "vSpecularExponent"), 30.0);
+        this.gl.vertexAttrib1f(this.gl.getAttribLocation(this.program, "vSpecularExponent"), 50.0);
         this.gl.uniformMatrix4fv(this.gl.getUniformLocation(this.program, "model_view"), false, mv.flatten());
         this.gl.drawArrays(this.gl.TRIANGLES, 0, this.numPoints);
     }

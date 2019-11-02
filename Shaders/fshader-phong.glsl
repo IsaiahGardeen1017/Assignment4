@@ -6,7 +6,8 @@ in vec3 N;
 in vec3 H;
 
 in vec4 fNormal; //material color
-in vec4 fAmbientDiffuseColor;
+in vec4 fAmbientColor;
+in vec4 fDiffuseColor;
 in vec4 fSpecularColor;
 in float fSpecularExponent;
 
@@ -25,10 +26,10 @@ void main()
     vec3 nH = normalize(H);
 
     //Ambient term
-    vec4 amb = fAmbientDiffuseColor * ambient_light;
+    vec4 amb = fAmbientColor * ambient_light;
 
     //Diffuse Term
-    vec4 diff = max(0.0, dot(nL, nN)) * fAmbientDiffuseColor * light_color;
+    vec4 diff = max(0.0, dot(nL, nN)) * fDiffuseColor * light_color;
 
     //Specular Color
     vec4 spec = pow(max(0.0, dot(nN, nH)), fSpecularExponent) * fSpecularColor * light_color;

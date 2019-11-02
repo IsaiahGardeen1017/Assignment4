@@ -1,8 +1,7 @@
 "use strict";
 
-import {flatten, lookAt, mat4, rotateY, translate, vec4} from "../helperfunctions.js";
-import {geometryGenerator} from "../geometryGenerator.js";
-import {camera} from "../camera";
+import {flatten, lookAt, mat4, rotateY, translate, vec4} from "./helperfunctions.js";
+import {camera} from "./camera";
 
 export class grassObject{
     program:WebGLProgram;
@@ -46,13 +45,19 @@ export class grassObject{
     draw(){
         this.bindToBuffer();
         let mv:mat4 = this.cam.look();
+        let lightPosition:mat4 = mv;
 
         //Translations
         //mv = mv.mult(rotateY(45));
         mv = mv.mult(translate(0, -1, 0));
+        this.gl.uniform4fv(this.gl.getUniformLocation(this.program, "light_position"), (lightPosition.mult(new vec4(0, 10, 0, 1))).flatten());
 
+        this.gl.vertexAttrib4fv(this.gl.getAttribLocation(this.program, "vAmbientColor"), [0.0, 0.5, 0.0, 1.0]);
+        this.gl.vertexAttrib4fv(this.gl.getAttribLocation(this.program, "vDiffuseColor"), [0.0, 0.5, 0.0, 1.0]);
+        this.gl.vertexAttrib4fv(this.gl.getAttribLocation(this.program, "vSpecularColor"), [1.0, 1.0, 1.0, 1.0]);
+        this.gl.vertexAttrib1f(this.gl.getAttribLocation(this.program, "vSpecularExponent"), 100.0);
         this.gl.uniformMatrix4fv(this.gl.getUniformLocation(this.program, "model_view"), false, mv.flatten());
-        this.gl.drawArrays(this.gl.TRIANGLES, 0, this.numPoints);    // draw the truck
+        this.gl.drawArrays(this.gl.TRIANGLES, 0, this.numPoints);
     }
 }
 
