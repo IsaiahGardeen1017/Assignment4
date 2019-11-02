@@ -11,7 +11,6 @@ out vec3 L;
 out vec3 N;
 out vec3 H;
 
-out vec4 fNormal;
 out vec4 fAmbientColor;
 out vec4 fDiffuseColor;
 out vec4 fSpecularColor;
@@ -31,7 +30,6 @@ void main(){
 
     gl_Position = projection * veyepos;
 
-    fNormal = vNormal;
     fAmbientColor = vAmbientColor;
     fDiffuseColor = vDiffuseColor;
     fSpecularColor = vSpecularColor;

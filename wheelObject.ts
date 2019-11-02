@@ -46,11 +46,11 @@ export class wheelObject{
         this.zRotOffset += (zrot * rotSpeed);
     }
 
-    draw(direction:number, steeringWheel:number, mv:mat4){
+    draw(direction:number, steeringWheel:number, mv:mat4, pos:number){
         this.bindToBuffer();
         let maxTurnAngle:number = 15; //Determines how far the wheels turn (arbitrary)
         //Translations
-        let scaler:number = .01;
+        let scaler:number = pos/1000 + 0.1;
         mv = mv.mult(scalem(scaler, scaler, scaler));
         if(this.frontWheel){
             mv = mv.mult(rotateY(steeringWheel * maxTurnAngle));

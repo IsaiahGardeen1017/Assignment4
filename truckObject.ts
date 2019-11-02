@@ -17,11 +17,11 @@ export class truckObject{
 
     mass:number = 1500;
 
-    airdrag:number = 25; //Coefficient applied to air resistance force (Scales quadratically)
-    roaddrag:number = 2; //Coefficient applied to rolling resistance (Scales Linearly)
+    airdrag:number = 15; //Coefficient applied to air resistance force (Scales quadratically)
+    roaddrag:number = 4; //Coefficient applied to rolling resistance (Scales Linearly)
 
-    horsePower:number = 5; //Coefficient applied to engineForce
-    breakpower:number = 10; //Coefficient applied to brakeForce
+    horsePower:number = 15; //Coefficient applied to engineForce
+    breakpower:number = 30; //Coefficient applied to brakeForce
 
     gasPedal:number = 0;
     brakePedal:number = 0;
@@ -159,9 +159,8 @@ export class truckObject{
     }
 
 
-    draw(drawHead: boolean){
+    draw(drawHead: boolean, pos:number){
         let mv:mat4 = this.cam.look();
-        let lightPosition:mat4 = mv;
         mv = mv.mult(translate(this.xoffset,this.yoffset, this.zoffset));
         mv = mv.mult(rotateY(this.yrot));
 
@@ -173,16 +172,16 @@ export class truckObject{
         //Draw the wheels
         let wheelrot:number = this.realVelocity.mag() * this.dir[0];
         let wheelHight:number = -0.15;
-        let frontWheelDistance:number = 0.75;
-        let rearWheelDistance:number = -0.85;
-        let wheelWidth:number = -.4;
+        let frontWheelDistance:number = .69;
+        let rearWheelDistance:number = -0.78;
+        let wheelWidth:number = -0.35;
         //The 180 rotation rotates it so the wheels face out
         this.frontWheel.spin(wheelrot);
-        this.frontWheel.draw(1, this.steeringWheel, mv.mult(translate(frontWheelDistance, wheelHight, wheelWidth)).mult(rotateY(180)));
-        this.frontWheel.draw(-1, this.steeringWheel, mv.mult(translate(frontWheelDistance, wheelHight, -wheelWidth)));
+        this.frontWheel.draw(1, this.steeringWheel, mv.mult(translate(frontWheelDistance, wheelHight, wheelWidth)).mult(rotateY(180)), pos);
+        this.frontWheel.draw(-1, this.steeringWheel, mv.mult(translate(frontWheelDistance, wheelHight, -wheelWidth)), pos);
         this.rearWheel.spin(wheelrot);
-        this.rearWheel.draw(1, 0, mv.mult(translate(rearWheelDistance, wheelHight, wheelWidth)).mult(rotateY(180)));
-        this.rearWheel.draw(-1, 0, mv.mult(translate(rearWheelDistance, wheelHight, -wheelWidth)));
+        this.rearWheel.draw(1, 0, mv.mult(translate(rearWheelDistance, wheelHight, wheelWidth)).mult(rotateY(180)), pos);
+        this.rearWheel.draw(-1, 0, mv.mult(translate(rearWheelDistance, wheelHight, -wheelWidth)), pos);
 
         //Truck only transformations
         let scaler:number = 0.01;//scale size of truck body
@@ -192,8 +191,6 @@ export class truckObject{
 
         //Draw the truck
         this.bindToBuffer();
-        this.gl.uniform4fv(this.gl.getUniformLocation(this.program, "light_position"), (lightPosition.mult(new vec4(0, 10, 0, 1))).flatten());
-
         this.gl.vertexAttrib4fv(this.gl.getAttribLocation(this.program, "vAmbientColor"), [0.5, 0.0, 0.0, 1.0]);
         this.gl.vertexAttrib4fv(this.gl.getAttribLocation(this.program, "vDiffuseColor"), [0.5, 0.0, 0.0, 1.0]);
         this.gl.vertexAttrib4fv(this.gl.getAttribLocation(this.program, "vSpecularColor"), [1.0, 1.0, 1.0, 1.0]);

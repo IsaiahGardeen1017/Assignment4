@@ -32,6 +32,8 @@ let spaceDown:boolean = false;
 let turnHeadLeftDown:boolean = false;
 let turnHeadRightDown:boolean = false;
 
+let positionValue:number = 0;//TODO DONT HAND IN THIS
+
  window.onload = function init(){
     canvas = document.getElementById("gl-canvas") as HTMLCanvasElement;
     gl = canvas.getContext('webgl2') as WebGLRenderingContext;
@@ -49,8 +51,8 @@ let turnHeadRightDown:boolean = false;
     gl.clearColor(0, 1, 1, 1);
     gl.enable(gl.DEPTH_TEST);
 
-    gl.cullFace(gl.BACK);
-    gl.enable(gl.CULL_FACE);
+    //gl.cullFace(gl.BACK);
+    //gl.enable(gl.CULL_FACE);
 
     cam = new camera();
     truck = new truckObject(gl, program, cam);
@@ -80,7 +82,7 @@ function update(){
         breakingPeriodStart = -1;
     }
     //I wrote this next bit in a chick fil a parking lot at midnight and somehow it works
-    let breakDelay:number = 120;
+    let breakDelay:number = 60;
     if(!reverse || !truck.funmode) {
         if(!truck.funmode) {
             reverse = true;
@@ -145,9 +147,9 @@ function update(){
     truck.update();
     cam.update();
     if(truck.funmode) {
-        document.getElementById("output").innerText = "You are in fun physics mode! you can toggle to boring assignment mode.";
+        document.getElementById("output").innerText = positionValue + " You are in fun physics mode! you can toggle to boring assignment mode.";
     }else{
-        document.getElementById("output").innerText = "You are in boring assignment mode, you can toggle to fun physics mode!";
+        document.getElementById("output").innerText = positionValue + " You are in boring assignment mode, you can toggle to fun physics mode!";
     }
 
     if(turnHeadRightDown) {
@@ -207,6 +209,13 @@ function keydownEvent(key:string){
         case"3":
             cam.toViewpointCam();
             break;
+        case"o":
+                positionValue++;
+            break;
+        case"l":
+                positionValue--;
+            break;
+
     }
 }
 
@@ -236,20 +245,17 @@ function keydownEvent(key:string){
      }
  }
 
-function toggleGameMode(input:any){
-     alert("click");
-}
 
 function renderFrame(){
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
 
-    let p:mat4 = perspective(cam.fov, canvas.clientWidth / canvas.clientHeight, 0.01, 100.0);
+    let p:mat4 = perspective(cam.fov, canvas.clientWidth / canvas.clientHeight, 0.01, 1000.0);
     gl.uniformMatrix4fv(uproj, false, p.flatten());
     gl.uniform4fv(gl.getUniformLocation(program, "light_color"), [1, 1, 1, 1]);//Light color
-    gl.uniform4fv(gl.getUniformLocation(program, "ambient_light"), [.5, .5, .5, 1]);//intensity
-
-    truck.draw(!(cam.camType === "viewpoint"));
+    gl.uniform4fv(gl.getUniformLocation(program, "ambient_light"), [.25, .25, .25, 1]);//intensity
+    gl.uniform4fv(gl.getUniformLocation(program, "light_position"), (cam.look().mult(new vec4(0, 250, 0, 1))).flatten());
+    truck.draw(!(cam.camType === "viewpoint"), positionValue);
     grass.draw();
 
  }

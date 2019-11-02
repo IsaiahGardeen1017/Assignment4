@@ -5,7 +5,6 @@ in vec3 L;
 in vec3 N;
 in vec3 H;
 
-in vec4 fNormal; //material color
 in vec4 fAmbientColor;
 in vec4 fDiffuseColor;
 in vec4 fSpecularColor;
