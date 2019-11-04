@@ -2,7 +2,6 @@
 
 import {flatten, lookAt, mat4, rotateY, rotateX, rotateZ, translate, vec4, vec2, scalem, toradians} from "./helperfunctions.js";
 import {wheelObject} from "./wheelObject.js";
-import {geometryGenerator, expandGeometry} from "./geometryGenerator.js";
 import {truckObject} from "./truckObject";
 import {grassObject} from "./grassObject";
 
@@ -111,7 +110,7 @@ export class camera{
                 this.camDirection = new vec4(this.truck.xoffset, 0, this.truck.zoffset, 1);
                 //let direction:vec4 = this.truck.realVelocity.normalize();
                 direction = new vec4(1, 0, 0, 0).normalize();
-                offset = 90
+                offset = 90 + (this.truck.steeringWheel * 2);
 
                 //Diretion the truck is traveling, we use this to find the position of the camera.
                 //Formula is x2=cosβx1−sinβy1  y2=sinβx1+cosβy1 to rotate a vector

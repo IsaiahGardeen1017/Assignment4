@@ -39,6 +39,11 @@ export class wheelObject{
         this.vColor = this.gl.getAttribLocation(this.program, "vNormal");
         this.gl.vertexAttribPointer(this.vColor, 4, this.gl.FLOAT, false, 32, 16);
         this.gl.enableVertexAttribArray(this.vColor);
+
+        this.gl.vertexAttrib4fv(this.gl.getAttribLocation(this.program, "vAmbientColor"), [0.1, 0.1, 0.1, 1.0]);
+        this.gl.vertexAttrib4fv(this.gl.getAttribLocation(this.program, "vDiffuseColor"), [0.1, 0.1, 0.1, 1.0]);
+        this.gl.vertexAttrib4fv(this.gl.getAttribLocation(this.program, "vSpecularColor"), [0.1, 0.1, 0.1, 1.0]);
+        this.gl.vertexAttrib1f(this.gl.getAttribLocation(this.program, "vSpecularExponent"), 30.0);
     }
 
     spin(zrot:number){
@@ -50,7 +55,7 @@ export class wheelObject{
         this.bindToBuffer();
         let maxTurnAngle:number = 15; //Determines how far the wheels turn (arbitrary)
         //Translations
-        let scaler:number = pos/1000 + 0.1;
+        let scaler:number = 0.01;
         mv = mv.mult(scalem(scaler, scaler, scaler));
         if(this.frontWheel){
             mv = mv.mult(rotateY(steeringWheel * maxTurnAngle));
@@ -60,10 +65,7 @@ export class wheelObject{
 
 
 
-        this.gl.vertexAttrib4fv(this.gl.getAttribLocation(this.program, "vAmbientColor"), [0.1, 0.1, 0.1, 1.0]);
-        this.gl.vertexAttrib4fv(this.gl.getAttribLocation(this.program, "vDiffuseColor"), [0.1, 0.1, 0.1, 1.0]);
-        this.gl.vertexAttrib4fv(this.gl.getAttribLocation(this.program, "vSpecularColor"), [0.1, 0.1, 0.1, 1.0]);
-        this.gl.vertexAttrib1f(this.gl.getAttribLocation(this.program, "vSpecularExponent"), 30.0);
+
         this.gl.uniformMatrix4fv(this.gl.getUniformLocation(this.program, "model_view"), false, mv.flatten());
         this.gl.drawArrays(this.gl.TRIANGLES, 0, this.numPoints);    // draw the truck
     }

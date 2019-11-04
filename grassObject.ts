@@ -49,6 +49,11 @@ export class grassObject{
         this.vColor = this.gl.getAttribLocation(this.program, "vNormal");
         this.gl.vertexAttribPointer(this.vColor, 4, this.gl.FLOAT, false, 32, 16);
         this.gl.enableVertexAttribArray(this.vColor);
+
+        this.gl.vertexAttrib4fv(this.gl.getAttribLocation(this.program, "vAmbientColor"), [0.3, 0.3, 0.3, 1.0]);
+        this.gl.vertexAttrib4fv(this.gl.getAttribLocation(this.program, "vDiffuseColor"), [0.3, 0.3, 0.3, 1.0]);
+        this.gl.vertexAttrib4fv(this.gl.getAttribLocation(this.program, "vSpecularColor"), [1.0, 1.0, 1.0, 1.0]);
+        this.gl.vertexAttrib1f(this.gl.getAttribLocation(this.program, "vSpecularExponent"), 1000.0);
     }
 
     bindToGrassBuffer(){
@@ -60,6 +65,11 @@ export class grassObject{
         this.vColor = this.gl.getAttribLocation(this.program, "vNormal");
         this.gl.vertexAttribPointer(this.vColor, 4, this.gl.FLOAT, false, 32, 16);
         this.gl.enableVertexAttribArray(this.vColor);
+
+        this.gl.vertexAttrib4fv(this.gl.getAttribLocation(this.program, "vAmbientColor"), [0.0, 0.5, 0.0, 1.0]);
+        this.gl.vertexAttrib4fv(this.gl.getAttribLocation(this.program, "vDiffuseColor"), [0.0, 0.5, 0.0, 1.0]);
+        this.gl.vertexAttrib4fv(this.gl.getAttribLocation(this.program, "vSpecularColor"), [0.0, 0.0, 0.0, 1.0]);
+        this.gl.vertexAttrib1f(this.gl.getAttribLocation(this.program, "vSpecularExponent"), 1.0);
     }
 
 
@@ -71,10 +81,6 @@ export class grassObject{
         let mvT = mv.mult(scalem(5,5 ,5));
         mvT = mvT.mult(rotateX(90));
         mvT = mvT.mult(translate(0, 0, 0.06));
-        this.gl.vertexAttrib4fv(this.gl.getAttribLocation(this.program, "vAmbientColor"), [0.3, 0.3, 0.3, 1.0]);
-        this.gl.vertexAttrib4fv(this.gl.getAttribLocation(this.program, "vDiffuseColor"), [0.3, 0.3, 0.3, 1.0]);
-        this.gl.vertexAttrib4fv(this.gl.getAttribLocation(this.program, "vSpecularColor"), [1.0, 1.0, 1.0, 1.0]);
-        this.gl.vertexAttrib1f(this.gl.getAttribLocation(this.program, "vSpecularExponent"), 1000.0);
         this.gl.uniformMatrix4fv(this.gl.getUniformLocation(this.program, "model_view"), false, mvT.flatten());
         this.gl.drawArrays(this.gl.TRIANGLES, 0, this.numTrackPoints);
 
@@ -82,10 +88,7 @@ export class grassObject{
         this.bindToGrassBuffer();
         //Translations
         mvT = mvT.mult(translate(0, 0, 0.21));
-        this.gl.vertexAttrib4fv(this.gl.getAttribLocation(this.program, "vAmbientColor"), [0.0, 0.5, 0.0, 1.0]);
-        this.gl.vertexAttrib4fv(this.gl.getAttribLocation(this.program, "vDiffuseColor"), [0.0, 0.5, 0.0, 1.0]);
-        this.gl.vertexAttrib4fv(this.gl.getAttribLocation(this.program, "vSpecularColor"), [1.0, 1.0, 1.0, 1.0]);
-        this.gl.vertexAttrib1f(this.gl.getAttribLocation(this.program, "vSpecularExponent"), 1000.0);
+
         this.gl.uniformMatrix4fv(this.gl.getUniformLocation(this.program, "model_view"), false, mvT.flatten());
         this.gl.drawArrays(this.gl.TRIANGLES, 0 , this.numGrassPoints);
     }

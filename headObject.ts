@@ -48,6 +48,12 @@ export class headObject{
         this.vColor = this.gl.getAttribLocation(this.program, "vNormal");
         this.gl.vertexAttribPointer(this.vColor, 4, this.gl.FLOAT, false, 32, 16);
         this.gl.enableVertexAttribArray(this.vColor);
+
+        this.gl.vertexAttrib4fv(this.gl.getAttribLocation(this.program, "vAmbientColor"), [1.0, 1.0, 1.0, 1.0]);
+        this.gl.vertexAttrib4fv(this.gl.getAttribLocation(this.program, "vDiffuseColor"), [1.0, 1.0, 1.0, 1.0]);
+        this.gl.vertexAttrib4fv(this.gl.getAttribLocation(this.program, "vSpecularColor"), [1.0, 1.0, 1.0, 1.0]);
+        this.gl.vertexAttrib1f(this.gl.getAttribLocation(this.program, "vSpecularExponent"), 50.0);
+
     }
 
 
@@ -61,14 +67,9 @@ export class headObject{
         mv = mv.mult(rotateY(this.yRotOffset + 180));
         mv = mv.mult(rotateX(-90));
 
-
-        this.gl.vertexAttrib4fv(this.gl.getAttribLocation(this.program, "vAmbientColor"), [1.0, 1.0, 1.0, 1.0]);
-        this.gl.vertexAttrib4fv(this.gl.getAttribLocation(this.program, "vDiffuseColor"), [1.0, 1.0, 1.0, 1.0]);
-        this.gl.vertexAttrib4fv(this.gl.getAttribLocation(this.program, "vSpecularColor"), [1.0, 1.0, 1.0, 1.0]);
-        this.gl.vertexAttrib1f(this.gl.getAttribLocation(this.program, "vSpecularExponent"), 50.0);
         this.gl.uniformMatrix4fv(this.gl.getUniformLocation(this.program, "model_view"), false, mv.flatten());
         this.gl.drawArrays(this.gl.TRIANGLES, 0, this.numPoints);
-        this.gl.drawArrays(this.gl.TRIANGLES, 0, this.numPoints);
+
     }
 
 

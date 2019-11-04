@@ -4,7 +4,20 @@
 
 import {truckObject} from "./truckObject.js";
 import {grassObject} from "./grassObject.js";
-import {vec4, mat4, initFileShaders, perspective, lookAt, flatten, translate, rotateY, rotateX, rotateZ, rotate} from './helperfunctions.js';
+import {
+    vec4,
+    mat4,
+    initFileShaders,
+    perspective,
+    lookAt,
+    flatten,
+    translate,
+    rotateY,
+    rotateX,
+    rotateZ,
+    rotate,
+    toradians
+} from './helperfunctions.js';
 import {camera} from "./camera.js";
 
 let gl:WebGLRenderingContext;
@@ -251,10 +264,31 @@ function renderFrame(){
 
 
     let p:mat4 = perspective(cam.fov, canvas.clientWidth / canvas.clientHeight, 0.01, 1000.0);
+
+    let look:mat4 = cam.look();
+
+    let lightColors:number[] = [];
+    lightColors = lightColors.concat([1, 1, 1, 1]);
+    lightColors = lightColors.concat([1, 1, 1, 1]);
+
+    let lightPositions:number[] = [];
+    lightPositions = lightPositions.concat(look.mult(new vec4(1, 12, 0, 1)).flatten());
+    lightPositions = lightPositions.concat(look.mult(new vec4(-1, 10, 0, 1)).flatten());
+
+    let lightDirections:number[] = [];
+    lightDirections = lightDirections.concat(look.mult(new vec4(0, -1, 0, 0)).flatten());
+    lightDirections = lightDirections.concat(look.mult(new vec4(0, -1, 0, 0)).flatten());
+
+    let lightAngles:number[] = [];
+    lightAngles.push(Math.cos(toradians(30)));
+    lightAngles.push(Math.cos(toradians(30)));
+
     gl.uniformMatrix4fv(uproj, false, p.flatten());
-    gl.uniform4fv(gl.getUniformLocation(program, "light_color"), [1, 1, 1, 1]);//Light color
+    gl.uniform4fv(gl.getUniformLocation(program, "light_color"), lightColors);//Light color
     gl.uniform4fv(gl.getUniformLocation(program, "ambient_light"), [.25, .25, .25, 1]);//intensity
-    gl.uniform4fv(gl.getUniformLocation(program, "light_position"), (cam.look().mult(new vec4(0, 250, 0, 1))).flatten());
+    gl.uniform4fv(gl.getUniformLocation(program, "light_position"), lightPositions);
+    gl.uniform4fv(gl.getUniformLocation(program, "light_direction"), lightDirections);
+    gl.uniform1fv(gl.getUniformLocation(program, "angle"), lightAngles);
     truck.draw(!(cam.camType === "viewpoint"), positionValue);
     grass.draw();
 

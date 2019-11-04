@@ -148,14 +148,14 @@ export class truckObject{
     }
 
     bindToBuffer(){
-            this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.bufferId);
-            this.vPosition = this.gl.getAttribLocation(this.program, "vPosition");
-            this.gl.vertexAttribPointer(this.vPosition, 4, this.gl.FLOAT, false, 32, 0);
-            this.gl.enableVertexAttribArray(this.vPosition);
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.bufferId);
+        this.vPosition = this.gl.getAttribLocation(this.program, "vPosition");
+        this.gl.vertexAttribPointer(this.vPosition, 4, this.gl.FLOAT, false, 32, 0);
+        this.gl.enableVertexAttribArray(this.vPosition);
 
-            this.vNormal = this.gl.getAttribLocation(this.program, "vNormal");
-            this.gl.vertexAttribPointer(this.vNormal, 4, this.gl.FLOAT, false, 32, 16);
-            this.gl.enableVertexAttribArray(this.vNormal);
+        this.vNormal = this.gl.getAttribLocation(this.program, "vNormal");
+        this.gl.vertexAttribPointer(this.vNormal, 4, this.gl.FLOAT, false, 32, 16);
+        this.gl.enableVertexAttribArray(this.vNormal);
     }
 
 
