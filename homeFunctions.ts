@@ -19,7 +19,7 @@ import {
     toradians
 } from './helperfunctions.js';
 import {camera} from "./camera.js";
-import {sendLightArrays} from "./Lights.js";
+import {sendLightArrays, toggleDayNight, toggleHeadlights, toggleSiren} from "./Lights.js";
 
 let gl:WebGLRenderingContext;
 let canvas:HTMLCanvasElement;
@@ -224,10 +224,19 @@ function keydownEvent(key:string){
             cam.toViewpointCam();
             break;
         case"o":
-                positionValue++;
+            positionValue++;
             break;
         case"l":
-                positionValue--;
+            positionValue--;
+            break;
+        case"0":
+            toggleDayNight(gl);
+            break;
+        case"9":
+            toggleHeadlights();
+            break;
+        case"8":
+            toggleSiren();
             break;
 
     }
@@ -266,7 +275,7 @@ function renderFrame(){
 
     let p:mat4 = perspective(cam.fov, canvas.clientWidth / canvas.clientHeight, 0.01, 1000.0);
 
-    sendLightArrays(truck, gl, program, cam.look());
+    sendLightArrays(truck, gl, program, cam.look(), frames);
 
     gl.uniformMatrix4fv(uproj, false, p.flatten());
     truck.draw(!(cam.camType === "viewpoint"), positionValue);

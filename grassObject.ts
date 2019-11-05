@@ -4,6 +4,8 @@ import {flatten, lookAt, mat4, rotateX, rotateY, scalem, translate, vec4} from "
 import {camera} from "./camera";
 import {getPlyPoints} from "./PlyReader.js";
 
+
+
 export class grassObject{
     program:WebGLProgram;
     gl:WebGLRenderingContext;
@@ -67,9 +69,9 @@ export class grassObject{
         this.gl.enableVertexAttribArray(this.vColor);
 
         this.gl.vertexAttrib4fv(this.gl.getAttribLocation(this.program, "vAmbientColor"), [0.0, 0.5, 0.0, 1.0]);
-        this.gl.vertexAttrib4fv(this.gl.getAttribLocation(this.program, "vDiffuseColor"), [0.0, 0.5, 0.0, 1.0]);
-        this.gl.vertexAttrib4fv(this.gl.getAttribLocation(this.program, "vSpecularColor"), [0.0, 0.0, 0.0, 1.0]);
-        this.gl.vertexAttrib1f(this.gl.getAttribLocation(this.program, "vSpecularExponent"), 1.0);
+        this.gl.vertexAttrib4fv(this.gl.getAttribLocation(this.program, "vDiffuseColor"), [0.25, 1.0, 0.25, 1.0]);
+        this.gl.vertexAttrib4fv(this.gl.getAttribLocation(this.program, "vSpecularColor"), [0.125, 0.5, 0.125, 1.0]);
+        this.gl.vertexAttrib1f(this.gl.getAttribLocation(this.program, "vSpecularExponent"), 30.0);
     }
 
 

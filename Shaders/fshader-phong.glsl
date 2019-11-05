@@ -10,11 +10,11 @@ in float fSpecularExponent;
 
 out vec4  fColor;
 
-uniform vec4[3] light_color;
+uniform vec4[5] light_color;
 uniform vec4 ambient_light;//intensity
-uniform vec4[3] light_position;
-uniform vec4[3] light_direction;
-uniform float[3] angle;
+uniform vec4[5] light_position;
+uniform vec4[5] light_direction;
+uniform float[5] angle;
 
 void main()
 {
@@ -28,7 +28,7 @@ void main()
     //Specular Color
     vec4 spec = vec4(0,0,0,1);
 
-    for(int i = 0; i < 3; i++){
+    for(int i = 0; i < 5; i++){
         vec3 N = normalize(vN);
         vec3 V = normalize(-veyepos.xyz);
         vec3 L = normalize(light_position[i].xyz - veyepos.xyz);
