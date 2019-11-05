@@ -161,7 +161,7 @@ export class truckObject{
 
     draw(drawHead: boolean, pos:number){
         let mv:mat4 = this.cam.look();
-        mv = mv.mult(translate(this.xoffset,this.yoffset, this.zoffset));
+        mv = mv.mult(translate(this.xoffset, this.yoffset, this.zoffset));
         mv = mv.mult(rotateY(this.yrot));
 
         //Draw the head

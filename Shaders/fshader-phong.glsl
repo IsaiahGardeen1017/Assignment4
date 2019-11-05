@@ -10,31 +10,25 @@ in float fSpecularExponent;
 
 out vec4  fColor;
 
-uniform vec4[2] light_color;
+uniform vec4[3] light_color;
 uniform vec4 ambient_light;//intensity
-uniform vec4[2] light_position;
-uniform vec4[2] light_direction;
-uniform float[2] angle;
+uniform vec4[3] light_position;
+uniform vec4[3] light_direction;
+uniform float[3] angle;
 
 void main()
 {
-
-
-
-
-
-
 
     //Ambient term
     vec4 amb = fAmbientColor * ambient_light;
 
     //Diffuse Term
-    vec4 diff = vec4(0,0,0,0);
+    vec4 diff = vec4(0,0,0,1);
 
     //Specular Color
-    vec4 spec = vec4(0,0,0,0);
+    vec4 spec = vec4(0,0,0,1);
 
-    for(int i = 0; i < 2; i++){
+    for(int i = 0; i < 3; i++){
         vec3 N = normalize(vN);
         vec3 V = normalize(-veyepos.xyz);
         vec3 L = normalize(light_position[i].xyz - veyepos.xyz);
@@ -44,13 +38,12 @@ void main()
 
         if(cos < -angle[i]){
             diff = diff + max(0.0, dot(L, N)) * fDiffuseColor * light_color[i];
-            if (dot(L, N) < 0.0){
+            if (dot(L, N) < 0.0){//In the spotlight
                 spec = spec + vec4(0, 0, 0, 1);//no light on the back side, Blim-Phong Issue
-            } else {
+            } else {//Not in the spotlight
                 spec = spec + pow(max(0.0, dot(N, H)), fSpecularExponent) * fSpecularColor * light_color[i];
             }
         }
     }
-
     fColor = amb + spec + diff;
 }
