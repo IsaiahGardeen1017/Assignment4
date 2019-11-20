@@ -28,22 +28,25 @@ void main()
     //Specular Color
     vec4 spec = vec4(0,0,0,1);
 
+    vec3 N = normalize(vN);
+    vec3 V = normalize(-veyepos.xyz);
+
+
     for(int i = 0; i < 5; i++){
-        vec3 N = normalize(vN);
-        vec3 V = normalize(-veyepos.xyz);
+
         vec3 L = normalize(light_position[i].xyz - veyepos.xyz);
         vec3 H = normalize(L + V);
-
         float cos = dot(L, normalize(light_direction[i].xyz));
 
         if(cos < -angle[i]){
             diff = diff + max(0.0, dot(L, N)) * fDiffuseColor * light_color[i];
-            if (dot(L, N) < 0.0){//In the spotlight
+            if (dot(L, N) < 0.0){
                 spec = spec + vec4(0, 0, 0, 1);//no light on the back side, Blim-Phong Issue
-            } else {//Not in the spotlight
+            } else {
                 spec = spec + pow(max(0.0, dot(N, H)), fSpecularExponent) * fSpecularColor * light_color[i];
             }
         }
     }
-    fColor = amb + spec + diff;
+    fColor = vec4(N, 1);
+    //fColor = amb + spec + diff;
 }
