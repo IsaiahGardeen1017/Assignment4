@@ -47,6 +47,6 @@ void main()
             }
         }
     }
-    fColor = vec4(N, 1);
-    //fColor = amb + spec + diff;
+    //fColor = vec4(N, 1);
+    fColor = amb + spec + diff;
 }
